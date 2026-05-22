@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html dir="rtl" lang="ar">
 <head>
 <meta charset="utf-8"/>
@@ -1821,7 +1820,7 @@
     
 
         /* =========================================================
-           وضع العرض التقديمي Slider - لا يغير محتوى أو تنسيق الصفحات
+           وضع العرض التقديمي Slider - العرض 95% مع خلفية زيتية 5%
            ========================================================= */
         .presentation-progress-wrap {
             position: fixed;
@@ -1937,27 +1936,18 @@
             pointer-events: none;
         }
 
+        /* وضع العرض التقديمي: خلفية زيتية نقية مع شريحة 95% فقط */
         body.slider-mode {
             padding: 0 !important;
             margin: 0 !important;
             width: 100vw;
             height: 100vh;
             overflow: hidden !important;
-            background:
-                radial-gradient(circle at top left, rgba(52,232,158,.18), transparent 32%),
-                radial-gradient(circle at bottom right, rgba(253,187,45,.16), transparent 34%),
-                linear-gradient(135deg, #08111f, #111827 55%, #0f3443) !important;
+            background: #6B5B3E !important; /* لون زيتي دافئ يحيط بالشريحة */
         }
+        /* إزالة أي تأثيرات إضافية على الخلفية */
         body.slider-mode::before {
-            content: "";
-            position: fixed;
-            inset: 0;
-            z-index: 0;
-            background-image:
-                linear-gradient(rgba(255,255,255,.045) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255,255,255,.045) 1px, transparent 1px);
-            background-size: 34px 34px;
-            pointer-events: none;
+            display: none !important;
         }
         body.slider-mode .presentation-progress-wrap,
         body.slider-mode .presentation-toolbar,
@@ -1974,7 +1964,7 @@
             right: auto !important;
             bottom: auto !important;
             margin: 0 !important;
-            transform: translate(-50%, -50%) scale(var(--slide-scale, 1)) !important;
+            transform: translate(-50%, calc(-50% + var(--slide-y-offset, 0px))) scale(var(--slide-scale, 1)) !important;
             transform-origin: center center !important;
             z-index: 10 !important;
             box-shadow: 0 24px 70px rgba(0,0,0,.45) !important;
@@ -2009,8 +1999,8 @@
             filter: drop-shadow(0 28px 55px rgba(0,0,0,.36));
         }
         .presentation-toolbar {
-            bottom: 10px;
-            padding: 9px 11px;
+            bottom: 8px;
+            padding: 7px 10px;
             border-radius: 20px;
             background: linear-gradient(135deg, rgba(15,23,42,.92), rgba(15,52,67,.88));
         }
@@ -2038,14 +2028,10 @@
             to   { opacity: 1; transform: translate(-50%, -50%) scale(var(--slide-scale, 1)) translateY(0) !important; }
         }
         @media (max-width: 768px) {
-                 .page{
+            .page{
                 width:100%;
             }
-
-
-             
-
-         .presentation-toolbar {
+            .presentation-toolbar {
                 right: 6px;
                 left: 6px;
                 bottom: 6px;
@@ -2067,6 +2053,9 @@
             body.slider-mode .page,
             body.slider-mode .cover-page-new { border-radius: 8px !important; }
         }
+
+
+        
         @media print {
             .presentation-progress-wrap,
             .presentation-toolbar,
@@ -2092,7 +2081,143 @@
             }
         }
 
-    </style>
+    
+/* =========================================================
+   إصلاح نهائي لعرض وارتفاع السلايدر على الموبايل
+   يحافظ على مقاس A4 Landscape الأصلي ويعمل Scale تلقائي حسب الشاشة
+   ========================================================= */
+
+html,
+body{
+    width:100%;
+    min-height:100%;
+    overflow-x:hidden;
+}
+
+body.slider-mode{
+    width:100vw !important;
+    height:100vh !important;
+    height:100dvh !important;
+    overflow:hidden !important;
+    background:#6B5B3E !important;
+    padding:0 !important;
+    margin:0 !important;
+}
+
+/* في وضع العرض فقط: نثبت المقاس الأصلي للشريحة ثم نعمل لها Scale */
+body.slider-mode .page,
+body.slider-mode .cover-page-new{
+    width:297mm !important;
+    height:210mm !important;
+    min-height:210mm !important;
+    max-width:none !important;
+    max-height:none !important;
+    position:fixed !important;
+    top:50% !important;
+    left:50% !important;
+    right:auto !important;
+    bottom:auto !important;
+    margin:0 !important;
+    transform:translate(-50%, calc(-50% + var(--slide-y-offset, 0px))) scale(var(--slide-scale, 1)) !important;
+    transform-origin:center center !important;
+    overflow:hidden !important;
+}
+
+/* منع تغير أبعاد الصفحات الداخلية أثناء السلايدر */
+body.slider-mode .page-content{
+    height:100% !important;
+    max-height:100% !important;
+    overflow:hidden !important;
+}
+
+/* تحسين وضع الهاتف بدون تغيير بيانات أو تنسيق داخلي */
+@media (max-width:768px){
+
+    body.slider-mode{
+        width:100vw !important;
+        height:100vh !important;
+        height:100dvh !important;
+        overflow:hidden !important;
+        background:#6B5B3E !important;
+    }
+
+    body.slider-mode .page,
+    body.slider-mode .cover-page-new{
+        width:297mm !important;
+        height:210mm !important;
+        min-height:210mm !important;
+        border-radius:8px !important;
+        box-shadow:0 14px 38px rgba(0,0,0,.45) !important;
+    }
+
+    .presentation-toolbar{
+        left:6px !important;
+        right:6px !important;
+        bottom:6px !important;
+        transform:none !important;
+        width:auto !important;
+        max-width:calc(100vw - 12px) !important;
+        justify-content:center !important;
+        flex-wrap:wrap !important;
+        gap:5px !important;
+        padding:5px !important;
+        border-radius:14px !important;
+    }
+
+    .presentation-toolbar button{
+        min-width:36px !important;
+        height:34px !important;
+        padding:0 8px !important;
+        font-size:12px !important;
+        border-radius:10px !important;
+    }
+
+    .presentation-toolbar .btn-text{
+        display:none !important;
+    }
+
+    .presentation-toolbar .slide-counter{
+        min-width:68px !important;
+        height:34px !important;
+        font-size:11px !important;
+        border-radius:10px !important;
+    }
+
+    .presentation-toolbar select{
+        height:34px !important;
+        max-width:76px !important;
+        font-size:11px !important;
+        border-radius:10px !important;
+        padding:0 5px !important;
+    }
+
+    .presentation-progress-wrap{
+        height:6px !important;
+    }
+}
+
+/* في الوضع العادي خارج السلايدر، الصفحة تظل بعرض الشاشة كما طلبت */
+body:not(.slider-mode) .page{
+    width:100%;
+}
+
+/* تحسين للشاشات القصيرة جدًا */
+@media (max-height:520px){
+    .presentation-toolbar{
+        opacity:.92;
+        transform:translateX(-50%) scale(.86) !important;
+        transform-origin:center bottom !important;
+    }
+
+    @media (max-width:768px){
+        .presentation-toolbar{
+            transform:scale(.86) !important;
+            transform-origin:center bottom !important;
+        }
+    }
+}
+
+</style>
 </head>
 <body>
 
@@ -2324,23 +2449,24 @@
 <div class="page-content">
 <div class="compressor-header-corporate"><div><h1><i class="fas fa-check-double"></i> أولاً: المعدات الجاهزة والعاملة </h1><p></p></div><div class="compressor-tag">المجموعة الأولى</div></div>
 <div class="compressor-section-title active"><i class="fas fa-circle-check"></i> الكمبروسرات العاملة في إدارات وأفرع الشركة - العدد الإجمالي: 33 معدة</div>
-<div class="compressor-table-box"><table><thead><tr><th style="width:34px;">م</th><th style="width:86px;">كود المعدة ↑</th><th style="width:100px;">ماركة المعدة</th><th style="width:66px;">القدرة</th><th>الجهة المتعاقد معها</th><th>مكان التواجد الفعلي</th><th style="width:54px;">سنة الصنع</th><th style="width:64px;">الحالة</th><th>ملاحظات التشغيل</th></tr></thead><tbody><tr><td>1</td><td class="code active-code">16/01/169</td><td>ATLAS COPCO</td><td>10 BAR</td><td>شرق و وسط الدلتا</td><td>مشروع غزل المحلة</td><td>1997</td><td><span class="compressor-badge active">تعمل</span></td><td class="note-cell"></td></tr>
-<tr><td>2</td><td class="code active-code">16/01/192</td><td>ATLAS COPCO</td><td>10 BAR</td><td>فرع الاسكندرية</td><td>ميناء ابو قير</td><td>1998</td><td><span class="compressor-badge active">تعمل</span></td><td class="note-cell"></td></tr>
-<tr><td>3</td><td class="code active-code">16/01/201</td><td>ATLAS COPCO</td><td>7 BAR</td><td>ادارة الكبارى</td><td>مشروعات ادفو</td><td>1999</td><td><span class="compressor-badge active">تعمل</span></td><td class="note-cell"></td></tr>
-<tr><td>4</td><td class="code active-code">16/01/211</td><td>INGERSOLL RAND</td><td>6 BAR</td><td>فرع سيناء</td><td>ورش ديوتس</td><td>2000</td><td><span class="compressor-badge active">تعمل</span></td><td class="note-cell"></td></tr>
-<tr><td>5</td><td class="code active-code">16/01/765</td><td>COMPAIR</td><td>10 BAR</td><td>ادارة الانفاق</td><td>ادارة الانفاق</td><td>1992</td><td><span class="compressor-badge active">تعمل</span></td><td class="note-cell"></td></tr>
-<tr><td>6</td><td class="code active-code">16/01/774</td><td>INGERSOLL RAND</td><td>10 BAR</td><td>ادارة الكبارى</td><td>مراغة</td><td>1993</td><td><span class="compressor-badge active">تعمل</span></td><td class="note-cell"></td></tr>
-<tr><td>7</td><td class="code active-code">16/01/786</td><td>INGERSOLL RAND</td><td>10 BAR</td><td>فرع مدينة نصر</td><td>فرع مدينة نصر</td><td>1994</td><td><span class="compressor-badge active">تعمل</span></td><td class="note-cell"></td></tr>
-<tr><td>8</td><td class="code active-code">16/01/790</td><td>ATLAS COPCO</td><td>21 BAR</td><td>فرع اسيوط</td><td>فرع اسيوط</td><td>1997</td><td><span class="compressor-badge active">تعمل</span></td><td class="note-cell"></td></tr>
-<tr><td>9</td><td class="code active-code">16/01/834</td><td>SULLAIR</td><td>7 BAR</td><td>ادارة الكبارى</td><td>القطار السريع</td><td>2003</td><td><span class="compressor-badge active">تعمل</span></td><td class="note-cell"></td></tr>
-<tr><td>10</td><td class="code active-code">16/01/847</td><td>ATLAS COPCO</td><td>7 BAR</td><td>فرع مدينة نصر</td><td>القطار السريع</td><td>2009</td><td><span class="compressor-badge active">تعمل</span></td><td class="note-cell"></td></tr>
-<tr><td>11</td><td class="code active-code">16/01/851</td><td>ATLAS COPCO</td><td>11 BAR</td><td>صيانة القصور</td><td>كلية الهندسة الاسكندرية</td><td>2009</td><td><span class="compressor-badge active">تعمل</span></td><td class="note-cell"></td></tr>
-<tr><td>12</td><td class="code active-code">16/01/854</td><td>INGERSOLL RAND</td><td>10 BAR</td><td>فرع القاهرة</td><td>القطار السريع</td><td>2008</td><td><span class="compressor-badge active">تعمل</span></td><td class="note-cell"></td></tr>
-<tr><td>13</td><td class="code active-code">16/01/855</td><td>INGERSOLL RAND</td><td>10 BAR</td><td>صيانة القصور</td><td>صيانة القصور</td><td>2008</td><td><span class="compressor-badge active">تعمل</span></td><td class="note-cell"></td></tr>
-<tr><td>14</td><td class="code active-code">16/01/865</td><td>COMPAIR</td><td>10 BAR</td><td>فرع الاسكندرية</td><td>مشروع العالمين</td><td>2009</td><td><span class="compressor-badge active">تعمل</span></td><td class="note-cell"></td></tr>
-<tr><td>15</td><td class="code active-code">16/01/871</td><td>COMPAIR</td><td>11 BAR</td><td>فرع شمال الدلتا</td><td>مشروع تطوير لسان راس البر</td><td>2009</td><td><span class="compressor-badge active">تعمل</span></td><td class="note-cell"></td></tr>
-<tr><td>16</td><td class="code active-code">16/01/883</td><td>ATLAS COPCO</td><td>11 BAR</td><td>فرع شمال الدلتا</td><td>مشروعات دمياط</td><td>2010</td><td><span class="compressor-badge active">تعمل</span></td><td class="note-cell"></td></tr>
-<tr><td>17</td><td class="code active-code">16/01/884</td><td>ATLAS COPCO</td><td>10 BAR</td><td>فرع سيناء</td><td>قناه السويس</td><td>2010</td><td><span class="compressor-badge active">تعمل</span></td><td class="note-cell"></td></tr></tbody></table></div>
+<div class="compressor-table-box"><table><thead><tr><th style="width:34px;">م</th><th style="width:86px;">كود المعدة ↑</th><th style="width:100px;">ماركة المعدة</th><th style="width:66px;">القدرة</th><th>الجهة المتعاقد معها</th><th>مكان التواجد الفعلي</th><th style="width:54px;">سنة الصنع</th><th style="width:64px;">الحالة</th><th>ملاحظات التشغيل</th></tr></thead><tbody><tr><td>1</th><td class="code active-code">16/01/169</th><td>ATLAS COPCO</th><td>10 BAR</th><td>شرق و وسط الدلتا</th><td>مشروع غزل المحلة</th><td>1997</th><td><span class="compressor-badge active">تعمل</span></th><td class="note-cell"></th></tr>
+<tr><td>2</th><td class="code active-code">16/01/192</th><td>ATLAS COPCO</th><td>10 BAR</th><td>فرع الاسكندرية</th><td>ميناء ابو قير</th><td>1998</th><td><span class="compressor-badge active">تعمل</span></th><td class="note-cell"></th></tr>
+<tr><td>3</th><td class="code active-code">16/01/201</th><td>ATLAS COPCO</th><td>7 BAR</th><td>ادارة الكبارى</th><td>مشروعات ادفو</th><td>1999</th><td><span class="compressor-badge active">تعمل</span></th><td class="note-cell"></th></tr>
+<tr><td>4</th><td class="code active-code">16/01/211</th><td>INGERSOLL RAND</th><td>6 BAR</th><td>فرع سيناء</th><td>ورش ديوتس</th><td>2000</th><td><span class="compressor-badge active">تعمل</span></th><td class="note-cell"></th></tr>
+<tr><td>5</th><td class="code active-code">16/01/765</th><td>COMPAIR</th><td>10 BAR</th><td>ادارة الانفاق</th><td>ادارة الانفاق</th><td>1992</th><td><span class="compressor-badge active">تعمل</span></th><td class="note-cell"></th></tr>
+<tr><td>6</th><td class="code active-code">16/01/774</th><td>INGERSOLL RAND</th><td>10 BAR</th><td>ادارة الكبارى</th><td>مراغة</th><td>1993</th><td><span class="compressor-badge active">تعمل</span></th><td class="note-cell"></th></tr>
+<tr><td>7</th><td class="code active-code">16/01/786</th><td>INGERSOLL RAND</th><td>10 BAR</th><td>فرع مدينة نصر</th><td>فرع مدينة نصر</th><td>1994</th><td><span class="compressor-badge active">تعمل</span></th><td class="note-cell"></th></tr>
+<tr><td>8</th><td class="code active-code">16/01/790</th><td>ATLAS COPCO</th><td>21 BAR</th><td>فرع اسيوط</th><td>فرع اسيوط</th><td>1997</th><td><span class="compressor-badge active">تعمل</span></th><td class="note-cell"></th></tr>
+<tr><td>9</th><td class="code active-code">16/01/834</th><td>SULLAIR</th><td>7 BAR</th><td>ادارة الكبارى</th><td>القطار السريع</th><td>2003</th><td><span class="compressor-badge active">تعمل</span></th><td class="note-cell"></th></tr>
+<tr><td>10</th><td class="code active-code">16/01/847</th><td>ATLAS COPCO</th><td>7 BAR</th><td>فرع مدينة نصر</th><td>القطار السريع</th><td>2009</th><td><span class="compressor-badge active">تعمل</span></th><td class="note-cell"></th></tr>
+<tr><td>11</th><td class="code active-code">16/01/851</th><td>ATLAS COPCO</th><td>11 BAR</th><td>صيانة القصور</th><td>كلية الهندسة الاسكندرية</th><td>2009</th><td><span class="compressor-badge active">تعمل</span></th><td class="note-cell"></th></tr>
+<tr><td>12</th><td class="code active-code">16/01/854</th><td>INGERSOLL RAND</th><td>10 BAR</th><td>فرع القاهرة</th><td>القطار السريع</th><td>2008</th><td><span class="compressor-badge active">تعمل</span></th><td class="note-cell"></th></tr>
+<tr><td>13</th><td class="code active-code">16/01/855</th><td>INGERSOLL RAND</th><td>10 BAR</th><td>صيانة القصور</th><td>صيانة القصور</th><td>2008</th><td><span class="compressor-badge active">تعمل</span></th><td class="note-cell"></th></tr>
+<tr><td>14</th><td class="code active-code">16/01/865</th><td>COMPAIR</th><td>10 BAR</th><td>فرع الاسكندرية</th><td>مشروع العالمين</th><td>2009</th><td><span class="compressor-badge active">تعمل</span></th><td class="note-cell"></th></tr>
+<tr><td>15</th><td class="code active-code">16/01/871</th><td>COMPAIR</th><td>11 BAR</th><td>فرع شمال الدلتا</th><td>مشروع تطوير لسان راس البر</th><td>2009</th><td><span class="compressor-badge active">تعمل</span></th><td class="note-cell"></th></tr>
+<tr><td>16</th><td class="code active-code">16/01/883</th><td>ATLAS COPCO</th><td>11 BAR</th><td>فرع شمال الدلتا</th><td>مشروعات دمياط</th><td>2010</th><td><span class="compressor-badge active">تعمل</span></th><td class="note-cell"></th></tr>
+<tr><td>17</th><td class="code active-code">16/01/884</th><td>ATLAS COPCO</th><td>10 BAR</th><td>فرع سيناء</th><td>قناه السويس</th><td>2010</th><td><span class="compressor-badge active">تعمل</span></th><td class="note-cell"></th></tr>
+</tbody></table></div>
 <div class="page-footer"><span>ورش العمرات - وحدة المعدات الثابتة</span><span class="compressor-page-number-box">صفحة <span class="current">5</span> من 25</span></div>
 </div>
 </div>
@@ -2349,22 +2475,23 @@
 <div class="page-content">
 <div class="compressor-header-corporate"><div><h1><i class="fas fa-check-double"></i> أولاً: المعدات الجاهزة والعاملة </h1><p></p></div><div class="compressor-tag">المجموعة الأولى</div></div>
 <div class="compressor-section-title active"><i class="fas fa-circle-check"></i> الكمبروسرات العاملة في إدارات وأفرع الشركة - العدد الإجمالي: 33 معدة</div>
-<div class="compressor-table-box"><table><thead><tr><th style="width:34px;">م</th><th style="width:86px;">كود المعدة ↑</th><th style="width:100px;">ماركة المعدة</th><th style="width:66px;">القدرة</th><th>الجهة المتعاقد معها</th><th>مكان التواجد الفعلي</th><th style="width:54px;">سنة الصنع</th><th style="width:64px;">الحالة</th><th>ملاحظات التشغيل</th></tr></thead><tbody><tr><td>18</td><td class="code active-code">16/01/885</td><td>ATLAS COPCO</td><td>7 BAR</td><td>تاجير المعدات</td><td>قناة السويس</td><td>2008</td><td><span class="compressor-badge active">تعمل</span></td><td class="note-cell"></td></tr>
-<tr><td>19</td><td class="code active-code">16/01/891</td><td>ATLAS COPCO</td><td>11 BAR</td><td>فرع جنوب الوادى</td><td>مشروعات ادفو</td><td>2011</td><td><span class="compressor-badge active">تعمل</span></td><td class="note-cell"></td></tr>
-<tr><td>20</td><td class="code active-code">16/01/892</td><td>ATLAS COPCO</td><td>10 BAR</td><td>صيانة القصور</td><td>كلية الهندسة الاسكندرية</td><td>2011</td><td><span class="compressor-badge active">تعمل</span></td><td class="note-cell"></td></tr>
-<tr><td>21</td><td class="code active-code">16/01/897</td><td>ATLAS COPCO</td><td>7 BAR</td><td>فرع القناه</td><td>مشروعات السويس</td><td>2002</td><td><span class="compressor-badge active">تعمل</span></td><td class="note-cell"></td></tr>
-<tr><td>22</td><td class="code active-code">16/01/899</td><td>ATLAS COPCO</td><td>7 BAR</td><td>ادارة الكبارى</td><td>وحدة الاصلاح</td><td>2015</td><td><span class="compressor-badge active">تعمل</span></td><td class="note-cell"></td></tr>
-<tr><td>23</td><td class="code active-code">16/01/903</td><td>COMPAIR</td><td>10 BAR</td><td>فرع مدينة نصر</td><td>محكمة النقض</td><td>2018</td><td><span class="compressor-badge active">تعمل</span></td><td class="note-cell"></td></tr>
-<tr><td>24</td><td class="code active-code">16/01/904</td><td>COMPAIR</td><td>21 BAR</td><td>ادارة الكبارى</td><td>الضبعة</td><td>2019</td><td><span class="compressor-badge active">تعمل</span></td><td class="note-cell"></td></tr>
-<tr><td>25</td><td class="code active-code">16/01/905</td><td>COMPAIR</td><td>10 BAR</td><td>فرع حلوان</td><td>بشتيل</td><td>2019</td><td><span class="compressor-badge active">تعمل</span></td><td class="note-cell"></td></tr>
-<tr><td>26</td><td class="code active-code">16/01/906</td><td>COMPAIR</td><td>10 BAR</td><td>صيانة القصور</td><td>صيانة القصور</td><td>2019</td><td><span class="compressor-badge active">تعمل</span></td><td class="note-cell"></td></tr>
-<tr><td>27</td><td class="code active-code">16/01/908</td><td>DOOSAN</td><td>7.5 BAR</td><td>فرع الاسكندرية</td><td>الضبعة</td><td>2019</td><td><span class="compressor-badge active">تعمل</span></td><td class="note-cell"></td></tr>
-<tr><td>28</td><td class="code active-code">16/01/909</td><td>COMPAIR</td><td>7.5 BAR</td><td>فرع الاسكندرية</td><td>الضبعة</td><td>2020</td><td><span class="compressor-badge active">تعمل</span></td><td class="note-cell"></td></tr>
-<tr><td>29</td><td class="code active-code">16/01/919</td><td>COMPAIR</td><td>7 BAR</td><td>فرع الاسكندرية</td><td>الضبعة</td><td>2021</td><td><span class="compressor-badge active">تعمل</span></td><td class="note-cell"></td></tr>
-<tr><td>30</td><td class="code active-code">16/01/923</td><td>COMPAIR</td><td>7 BAR</td><td>ادارة الكبارى</td><td>ورش الكبارى</td><td>2021</td><td><span class="compressor-badge active">تعمل</span></td><td class="note-cell"></td></tr>
-<tr><td>31</td><td class="code active-code">16/01/924</td><td>COMPAIR</td><td>7 BAR</td><td>ادارة الكبارى</td><td>وحدة الاصلاح</td><td>2021</td><td><span class="compressor-badge active">تعمل</span></td><td class="note-cell"></td></tr>
-<tr><td>32</td><td class="code active-code">16/01/925</td><td>ATLAS COPCO</td><td>7 BAR</td><td>الخط الرابع</td><td>الخط الرابع</td><td>2021</td><td><span class="compressor-badge active">تعمل</span></td><td class="note-cell"></td></tr>
-<tr><td>33</td><td class="code active-code">16/01/926</td><td>ATLAS COPCO</td><td>7 BAR</td><td>الخط الرابع</td><td>الخط الرابع</td><td>2021</td><td><span class="compressor-badge active">تعمل</span></td><td class="note-cell"></td></tr></tbody></table></div>
+<div class="compressor-table-box"><table><thead><tr><th style="width:34px;">م</th><th style="width:86px;">كود المعدة ↑</th><th style="width:100px;">ماركة المعدة</th><th style="width:66px;">القدرة</th><th>الجهة المتعاقد معها</th><th>مكان التواجد الفعلي</th><th style="width:54px;">سنة الصنع</th><th style="width:64px;">الحالة</th><th>ملاحظات التشغيل</th></tr></thead><tbody><tr><td>18</th><td class="code active-code">16/01/885</th><td>ATLAS COPCO</th><td>7 BAR</th><td>تاجير المعدات</th><td>قناة السويس</th><td>2008</th><td><span class="compressor-badge active">تعمل</span></th><td class="note-cell"></th></tr>
+<tr><td>19</th><td class="code active-code">16/01/891</th><td>ATLAS COPCO</th><td>11 BAR</th><td>فرع جنوب الوادى</th><td>مشروعات ادفو</th><td>2011</th><td><span class="compressor-badge active">تعمل</span></th><td class="note-cell"></th></tr>
+<tr><td>20</th><td class="code active-code">16/01/892</th><td>ATLAS COPCO</th><td>10 BAR</th><td>صيانة القصور</th><td>كلية الهندسة الاسكندرية</th><td>2011</th><td><span class="compressor-badge active">تعمل</span></th><td class="note-cell"></th></tr>
+<tr><td>21</th><td class="code active-code">16/01/897</th><td>ATLAS COPCO</th><td>7 BAR</th><td>فرع القناه</th><td>مشروعات السويس</th><td>2002</th><td><span class="compressor-badge active">تعمل</span></th><td class="note-cell"></th></tr>
+<tr><td>22</th><td class="code active-code">16/01/899</th><td>ATLAS COPCO</th><td>7 BAR</th><td>ادارة الكبارى</th><td>وحدة الاصلاح</th><td>2015</th><td><span class="compressor-badge active">تعمل</span></th><td class="note-cell"></th></tr>
+<tr><td>23</th><td class="code active-code">16/01/903</th><td>COMPAIR</th><td>10 BAR</th><td>فرع مدينة نصر</th><td>محكمة النقض</th><td>2018</th><td><span class="compressor-badge active">تعمل</span></th><td class="note-cell"></th></tr>
+<tr><td>24</th><td class="code active-code">16/01/904</th><td>COMPAIR</th><td>21 BAR</th><td>ادارة الكبارى</th><td>الضبعة</th><td>2019</th><td><span class="compressor-badge active">تعمل</span></th><td class="note-cell"></th></tr>
+<tr><td>25</th><td class="code active-code">16/01/905</th><td>COMPAIR</th><td>10 BAR</th><td>فرع حلوان</th><td>بشتيل</th><td>2019</th><td><span class="compressor-badge active">تعمل</span></th><td class="note-cell"></th></tr>
+<tr><td>26</th><td class="code active-code">16/01/906</th><td>COMPAIR</th><td>10 BAR</th><td>صيانة القصور</th><td>صيانة القصور</th><td>2019</th><td><span class="compressor-badge active">تعمل</span></th><td class="note-cell"></th></tr>
+<tr><td>27</th><td class="code active-code">16/01/908</th><td>DOOSAN</th><td>7.5 BAR</th><td>فرع الاسكندرية</th><td>الضبعة</th><td>2019</th><td><span class="compressor-badge active">تعمل</span></th><td class="note-cell"></th></tr>
+<tr><td>28</th><td class="code active-code">16/01/909</th><td>COMPAIR</th><td>7.5 BAR</th><td>فرع الاسكندرية</th><td>الضبعة</th><td>2020</th><td><span class="compressor-badge active">تعمل</span></th><td class="note-cell"></th></tr>
+<tr><td>29</th><td class="code active-code">16/01/919</th><td>COMPAIR</th><td>7 BAR</th><td>فرع الاسكندرية</th><td>الضبعة</th><td>2021</th><td><span class="compressor-badge active">تعمل</span></th><td class="note-cell"></th></tr>
+<tr><td>30</th><td class="code active-code">16/01/923</th><td>COMPAIR</th><td>7 BAR</th><td>ادارة الكبارى</th><td>ورش الكبارى</th><td>2021</th><td><span class="compressor-badge active">تعمل</span></th><td class="note-cell"></th></tr>
+<tr><td>31</th><td class="code active-code">16/01/924</th><td>COMPAIR</th><td>7 BAR</th><td>ادارة الكبارى</th><td>وحدة الاصلاح</th><td>2021</th><td><span class="compressor-badge active">تعمل</span></th><td class="note-cell"></th></tr>
+<tr><td>32</th><td class="code active-code">16/01/925</th><td>ATLAS COPCO</th><td>7 BAR</th><td>الخط الرابع</th><td>الخط الرابع</th><td>2021</th><td><span class="compressor-badge active">تعمل</span></th><td class="note-cell"></th></tr>
+<tr><td>33</th><td class="code active-code">16/01/926</th><td>ATLAS COPCO</th><td>7 BAR</th><td>الخط الرابع</th><td>الخط الرابع</th><td>2021</th><td><span class="compressor-badge active">تعمل</span></th><td class="note-cell"></th></tr>
+</tbody></table></div>
 <div class="page-footer"><span>ورش العمرات - وحدة المعدات الثابتة</span><span class="compressor-page-number-box">صفحة <span class="current">6</span> من 25</span></div>
 </div>
 </div>
@@ -2373,23 +2500,24 @@
 <div class="page-content">
 <div class="compressor-header-corporate"><div><h1><i class="fas fa-tools"></i> ثانياً: المعدات المعطلة وتحت الإصلاح</h1><p>سجل تفصيلي يوضح حالة العطل وتاريخه</p></div><div class="compressor-tag">المجموعة الثانية</div></div>
 <div class="compressor-section-title broken"><i class="fas fa-triangle-exclamation"></i> الوحدات المعطلة - ورش العمرات + الأفرع - العدد الإجمالي: 17 معدة</div>
-<div class="compressor-table-box"><table><thead><tr><th style="width:34px;">م</th><th style="width:82px;">كود المعدة ↑</th><th style="width:92px;">ماركة المعدة</th><th style="width:62px;">القدرة</th><th style="width:120px;">الجهة المتعاقد معها</th><th style="width:105px;">مكان التواجد الفعلي</th><th style="width:52px;">سنة الصنع</th><th>حالة المعدة - نوع العطل الفني التفصيلي</th><th style="width:80px;">تاريخ العطل</th></tr></thead><tbody><tr><td>1</td><td class="code broken-code">16/01/47</td><td>ATLAS COPCO</td><td>7 BAR</td><td>ترسانة المعصرة</td><td>ترسانة المعصرة</td><td>1980</td><td class="fault-cell">معطل ( تجديد شامل )</td><td>ـــــــــــ</td></tr>
-<tr><td>2</td><td class="code broken-code">16/01/109</td><td>ATLAS COPCO</td><td>7 BAR</td><td>ادارة الانشاءات البحرية</td><td>المخازن الرئيسية بالعاشر</td><td>1982</td><td class="fault-cell">معطل ( عمرة محرك + عمرة وحدة )</td><td>ـــــــــــ</td></tr>
-<tr><td>3</td><td class="code broken-code">16/01/164</td><td>ATLAS COPCO</td><td>7 BAR</td><td>ادارة الكبارى</td><td>موقع الكباري</td><td>1997</td><td class="fault-cell">معطل ( عمرة محرك )</td><td>ـــــــــــ</td></tr>
-<tr><td>4</td><td class="code broken-code">16/01/180</td><td>ATLAS COPCO</td><td>8 BAR</td><td>المنشاءات المتميزة</td><td>مخازن الكيلو 35</td><td>2005</td><td class="fault-cell">معطل ( عمرة محرك )</td><td>ـــــــــــ</td></tr>
-<tr><td>5</td><td class="code broken-code">16/01/772</td><td>INGERSOLL RAND</td><td>22 BAR</td><td>فرع جنوب الوادى</td><td>فرع جنوب الوادى</td><td>1993</td><td class="fault-cell">معطل ( تجديد شامل )</td><td>ـــــــــــ</td></tr>
-<tr><td>6</td><td class="code broken-code">16/01/791</td><td>ATLAS COPCO</td><td>10 BAR</td><td>المشروعات طموه</td><td>ورش العمرات</td><td>1998</td><td class="fault-cell">معطل الميكانيكا والكهرباء</td><td>2024-12-07</td></tr>
-<tr><td>7</td><td class="code broken-code">16/01/800</td><td>ATLAS COPCO</td><td>10 BAR</td><td>شرق و وسط الدلتا</td><td>ورش العمرات</td><td>2000</td><td class="fault-cell">معطل ( عمرة محرك )</td><td>2024-08-20</td></tr>
-<tr><td>8</td><td class="code broken-code">16/01/816</td><td>SULLAIR</td><td>7 BAR</td><td>تاجير المعدات</td><td>ورش العمرات</td><td>2005</td><td class="fault-cell">معطل ( عمرة محرك )</td><td>2026-03-09</td></tr>
-<tr><td>9</td><td class="code broken-code">16/01/817</td><td>SULLAIR</td><td>7 BAR</td><td>تاجير المعدات</td><td>ورش العمرات</td><td>2005</td><td class="fault-cell">معطل ( عمرة محرك )</td><td>2026-05-07</td></tr>
-<tr><td>10</td><td class="code broken-code">16/01/821</td><td>COMPAIR</td><td>10 BAR</td><td>ادارة الانشاءات البحرية</td><td>ورش العمرات</td><td>2005</td><td class="fault-cell">معطل ( عمرة محرك )</td><td>2024-11-06</td></tr>
-<tr><td>11</td><td class="code broken-code">16/01/857</td><td>INGERSOLL RAND</td><td>8 BAR</td><td>ادارة الانشاءات البحرية</td><td>ورش العمرات</td><td>2009</td><td class="fault-cell">معطل ( خلط ماء بالزيت &amp; تلف غرفة الرشاشات )</td><td>2025-12-18</td></tr>
-<tr><td>12</td><td class="code broken-code">16/01/868</td><td>INGERSOLL RAND</td><td>25 BAR</td><td>ادارة الانشاءات البحرية</td><td>وجه قبلى</td><td>2009</td><td class="fault-cell">معطل ( وحدة كبس هواء )</td><td>ـــــــــــ</td></tr>
-<tr><td>13</td><td class="code broken-code">16/01/873</td><td>ATLAS COPCO</td><td>10 BAR</td><td>فرع حلوان</td><td>ورش فرع حلوان</td><td>2010</td><td class="fault-cell">معطل ( عمرة محرك )</td><td>ـــــــــــ</td></tr>
-<tr><td>14</td><td class="code broken-code">16/01/879</td><td>ATLAS COPCO</td><td>7 BAR</td><td>المشروعات طموه</td><td>ورش العمرات</td><td>2009</td><td class="fault-cell">معطل ( تلف وحدة ضغط الهواء + تلف فلتر فاصل الزيت + تلف خزان الزيت + تلف Key Start الخاص بالتشغيل + تلف فى دفيرة الكهرباء )</td><td>2026-04-28</td></tr>
-<tr><td>15</td><td class="code broken-code">16/01/898</td><td>ATLAS COPCO</td><td>7 BAR</td><td>الاساسات</td><td>ورش العمرات</td><td>2009</td><td class="fault-cell">معطل ( عمرة محرك )</td><td>2025-03-20</td></tr>
-<tr><td>16</td><td class="code broken-code">16/01/900</td><td>DOOSAN</td><td>7.5 BAR</td><td>ادارة الكبارى</td><td>ورش الكبارى</td><td>2018</td><td class="fault-cell">معطل ( وحدة ضاغط )</td><td>ـــــــــــ</td></tr>
-<tr><td>17</td><td class="code broken-code">16/01/901</td><td>ATLAS COPCO</td><td>7 BAR</td><td>ادارة الانشاءات البحرية</td><td>ورش الانشاءات البحرية</td><td>2013</td><td class="fault-cell">معطل ( طلمبة ورشاشات )</td><td>ـــــــــــ</td></tr></tbody></table></div>
+<div class="compressor-table-box"><table><thead><tr><th style="width:34px;">م</th><th style="width:82px;">كود المعدة ↑</th><th style="width:92px;">ماركة المعدة</th><th style="width:62px;">القدرة</th><th style="width:120px;">الجهة المتعاقد معها</th><th style="width:105px;">مكان التواجد الفعلي</th><th style="width:52px;">سنة الصنع</th><th>حالة المعدة - نوع العطل الفني التفصيلي</th><th style="width:80px;">تاريخ العطل</th></tr></thead><tbody><tr><td>1</th><td class="code broken-code">16/01/47</th><td>ATLAS COPCO</th><td>7 BAR</th><td>ترسانة المعصرة</th><td>ترسانة المعصرة</th><td>1980</th><td class="fault-cell">معطل ( تجديد شامل )</th><td>ـــــــــــ</th></tr>
+<tr><td>2</th><td class="code broken-code">16/01/109</th><td>ATLAS COPCO</th><td>7 BAR</th><td>ادارة الانشاءات البحرية</th><td>المخازن الرئيسية بالعاشر</th><td>1982</th><td class="fault-cell">معطل ( عمرة محرك + عمرة وحدة )</th><td>ـــــــــــ</th></tr>
+<tr><td>3</th><td class="code broken-code">16/01/164</th><td>ATLAS COPCO</th><td>7 BAR</th><td>ادارة الكبارى</th><td>موقع الكباري</th><td>1997</th><td class="fault-cell">معطل ( عمرة محرك )</th><td>ـــــــــــ</th></tr>
+<tr><td>4</th><td class="code broken-code">16/01/180</th><td>ATLAS COPCO</th><td>8 BAR</th><td>المنشاءات المتميزة</th><td>مخازن الكيلو 35</th><td>2005</th><td class="fault-cell">معطل ( عمرة محرك )</th><td>ـــــــــــ</th></tr>
+<tr><td>5</th><td class="code broken-code">16/01/772</th><td>INGERSOLL RAND</th><td>22 BAR</th><td>فرع جنوب الوادى</th><td>فرع جنوب الوادى</th><td>1993</th><td class="fault-cell">معطل ( تجديد شامل )</th><td>ـــــــــــ</th></tr>
+<tr><td>6</th><td class="code broken-code">16/01/791</th><td>ATLAS COPCO</th><td>10 BAR</th><td>المشروعات طموه</th><td>ورش العمرات</th><td>1998</th><td class="fault-cell">معطل الميكانيكا والكهرباء</th><td>2024-12-07</th></tr>
+<tr><td>7</th><td class="code broken-code">16/01/800</th><td>ATLAS COPCO</th><td>10 BAR</th><td>شرق و وسط الدلتا</th><td>ورش العمرات</th><td>2000</th><td class="fault-cell">معطل ( عمرة محرك )</th><td>2024-08-20</th></tr>
+<tr><td>8</th><td class="code broken-code">16/01/816</th><td>SULLAIR</th><td>7 BAR</th><td>تاجير المعدات</th><td>ورش العمرات</th><td>2005</th><td class="fault-cell">معطل ( عمرة محرك )</th><td>2026-03-09</th></tr>
+<tr><td>9</th><td class="code broken-code">16/01/817</th><td>SULLAIR</th><td>7 BAR</th><td>تاجير المعدات</th><td>ورش العمرات</th><td>2005</th><td class="fault-cell">معطل ( عمرة محرك )</th><td>2026-05-07</th></tr>
+<tr><td>10</th><td class="code broken-code">16/01/821</th><td>COMPAIR</th><td>10 BAR</th><td>ادارة الانشاءات البحرية</th><td>ورش العمرات</th><td>2005</th><td class="fault-cell">معطل ( عمرة محرك )</th><td>2024-11-06</th></tr>
+<tr><td>11</th><td class="code broken-code">16/01/857</th><td>INGERSOLL RAND</th><td>8 BAR</th><td>ادارة الانشاءات البحرية</th><td>ورش العمرات</th><td>2009</th><td class="fault-cell">معطل ( خلط ماء بالزيت &amp; تلف غرفة الرشاشات )</th><td>2025-12-18</th></tr>
+<tr><td>12</th><td class="code broken-code">16/01/868</th><td>INGERSOLL RAND</th><td>25 BAR</th><td>ادارة الانشاءات البحرية</th><td>وجه قبلى</th><td>2009</th><td class="fault-cell">معطل ( وحدة كبس هواء )</th><td>ـــــــــــ</th></tr>
+<tr><td>13</th><td class="code broken-code">16/01/873</th><td>ATLAS COPCO</th><td>10 BAR</th><td>فرع حلوان</th><td>ورش فرع حلوان</th><td>2010</th><td class="fault-cell">معطل ( عمرة محرك )</th><td>ـــــــــــ</th></tr>
+<tr><td>14</th><td class="code broken-code">16/01/879</th><td>ATLAS COPCO</th><td>7 BAR</th><td>المشروعات طموه</th><td>ورش العمرات</th><td>2009</th><td class="fault-cell">معطل ( تلف وحدة ضغط الهواء + تلف فلتر فاصل الزيت + تلف خزان الزيت + تلف Key Start الخاص بالتشغيل + تلف فى دفيرة الكهرباء )</th><td>2026-04-28</th></tr>
+<tr><td>15</th><td class="code broken-code">16/01/898</th><td>ATLAS COPCO</th><td>7 BAR</th><td>الاساسات</th><td>ورش العمرات</th><td>2009</th><td class="fault-cell">معطل ( عمرة محرك )</th><td>2025-03-20</th></tr>
+<tr><td>16</th><td class="code broken-code">16/01/900</th><td>DOOSAN</th><td>7.5 BAR</th><td>ادارة الكبارى</th><td>ورش الكبارى</th><td>2018</th><td class="fault-cell">معطل ( وحدة ضاغط )</th><td>ـــــــــــ</th></tr>
+<tr><td>17</th><td class="code broken-code">16/01/901</th><td>ATLAS COPCO</th><td>7 BAR</th><td>ادارة الانشاءات البحرية</th><td>ورش الانشاءات البحرية</th><td>2013</th><td class="fault-cell">معطل ( طلمبة ورشاشات )</th><td>ـــــــــــ</th></tr>
+</tbody></table></div>
 <div class="page-footer"><span>ورش العمرات - وحدة المعدات الثابتة</span><span class="compressor-page-number-box">صفحة <span class="current">7</span> من 25</span></div>
 </div>
 </div>
@@ -2398,17 +2526,18 @@
 <div class="page-content">
 <div class="compressor-header-corporate"><div><h1><i class="fas fa-dumpster"></i> ثالثاً: المعدات المرفوعة وتحت التكهين</h1><p>المعدات الغير مجدى اصلاحها ومطلوب تكهينها </p></div><div class="compressor-tag">المجموعة الثالثة</div></div>
 <div class="compressor-section-title scrap"><i class="fas fa-trash-can"></i> الكمبروسرات الموصى بتكهينها  - العدد الإجمالي: 11 معدة</div>
-<div class="compressor-table-box"><table><thead><tr><th style="width:34px;">م</th><th style="width:82px;">كود المعدة ↑</th><th style="width:92px;">ماركة المعدة</th><th style="width:62px;">القدرة</th><th style="width:120px;">الجهة المتعاقد معها</th><th style="width:105px;">مكان التواجد الفعلي</th><th style="width:52px;">سنة الصنع</th><th style="width:64px;">الحالة</th><th>موقف خطابات اللجان والمالية والمخازن للتكهين</th></tr></thead><tbody><tr><td>1</td><td class="code scrap-code">16/01/126</td><td>ATLAS COPCO</td><td>9 BAR</td><td>المشروعات طموه</td><td>موقع طموه</td><td>1982</td><td><span class="compressor-badge scrap">تكهين</span></td><td class="note-cell">معطل ( تحت التكهين الفني )</td></tr>
-<tr><td>2</td><td class="code scrap-code">16/01/129</td><td>ATLAS COPCO</td><td>10 BAR</td><td>فرع الاسكندرية</td><td>فرع الاسكندرية</td><td>1982</td><td><span class="compressor-badge scrap">تكهين</span></td><td class="note-cell">معطل ( تحت التكهين الفني المرفوع )</td></tr>
-<tr><td>3</td><td class="code scrap-code">16/01/782</td><td>INGERSOLL RAND</td><td>11 BAR</td><td>ادارة الكبارى</td><td>موقع الكباري</td><td>2009</td><td><span class="compressor-badge scrap">تكهين</span></td><td class="note-cell">إجراءات لجان التكهين</td></tr>
-<tr><td>4</td><td class="code scrap-code">16/01/806</td><td>ATLAS COPCO</td><td>7 BAR</td><td>ادارة الكبارى</td><td>موقع الكباري</td><td>2003</td><td><span class="compressor-badge scrap">تكهين</span></td><td class="note-cell">إجراءات لجان التكهين</td></tr>
-<tr><td>5</td><td class="code scrap-code">16/01/824</td><td>INGERSOLL RAND</td><td>11 BAR</td><td>فرع الاسكندرية</td><td>ابيس</td><td>2007</td><td><span class="compressor-badge scrap">تكهين</span></td><td class="note-cell">معطل ( تحت التكهين الفني )</td></tr>
-<tr><td>6</td><td class="code scrap-code">16/01/845</td><td>ATLAS COPCO</td><td>11 BAR</td><td>ادارة الكبارى</td><td>مخازن الصالحية</td><td>2011</td><td><span class="compressor-badge scrap">تكهين</span></td><td class="note-cell">معطل ( تحت التكهين ) وتم عمل خطاب للمالية لعمل صرف خارجى بتاريخ 30 / 4 / 2026 للتكهين</td></tr>
-<tr><td>7</td><td class="code scrap-code">16/01/850</td><td>ATLAS COPCO</td><td>11 BAR</td><td>فرع الاسكندرية</td><td>ورش الاسكندرية</td><td>2009</td><td><span class="compressor-badge scrap">تكهين</span></td><td class="note-cell">معطل ( تحت التكهين الفني )</td></tr>
-<tr><td>8</td><td class="code scrap-code">16/01/867</td><td>COMPAIR</td><td>11 BAR</td><td>فرع الاسكندرية</td><td>ورش الاسكندرية</td><td>2009</td><td><span class="compressor-badge scrap">تكهين</span></td><td class="note-cell">معطل ( تحت التكهين الفني )</td></tr>
-<tr><td>9</td><td class="code scrap-code">16/01/890</td><td>ATLAS COPCO</td><td>10 BAR</td><td>ادارة الكبارى</td><td>موقع الكباري</td><td>2011</td><td><span class="compressor-badge scrap">تكهين</span></td><td class="note-cell">إجراءات لجان التكهين</td></tr>
-<tr><td>10</td><td class="code scrap-code">16/01/896</td><td>ATLAS COPCO</td><td>7 BAR</td><td>فرع القناه</td><td>ورش دويتس</td><td>2002</td><td><span class="compressor-badge scrap">تكهين</span></td><td class="note-cell">معطل ( تحت التكهين الفني )</td></tr>
-<tr><td>11</td><td class="code scrap-code">16/01/902</td><td>ATLAS COPCO</td><td>7 BAR</td><td>ادارة الانشاءات البحرية</td><td>ورش العمرات</td><td>2013</td><td><span class="compressor-badge scrap">تكهين</span></td><td class="note-cell">معطل ( تحت التكهين الفني )</td></tr></tbody></table></div>
+<div class="compressor-table-box"><table><thead><tr><th style="width:34px;">م</th><th style="width:82px;">كود المعدة ↑</th><th style="width:92px;">ماركة المعدة</th><th style="width:62px;">القدرة</th><th style="width:120px;">الجهة المتعاقد معها</th><th style="width:105px;">مكان التواجد الفعلي</th><th style="width:52px;">سنة الصنع</th><th style="width:64px;">الحالة</th><th>موقف خطابات اللجان والمالية والمخازن للتكهين</th></tr></thead><tbody><tr><td>1</th><td class="code scrap-code">16/01/126</th><td>ATLAS COPCO</th><td>9 BAR</th><td>المشروعات طموه</th><td>موقع طموه</th><td>1982</th><td><span class="compressor-badge scrap">تكهين</span></th><td class="note-cell">معطل ( تحت التكهين الفني )</th></tr>
+<tr><td>2</th><td class="code scrap-code">16/01/129</th><td>ATLAS COPCO</th><td>10 BAR</th><td>فرع الاسكندرية</th><td>فرع الاسكندرية</th><td>1982</th><td><span class="compressor-badge scrap">تكهين</span></th><td class="note-cell">معطل ( تحت التكهين الفني المرفوع )</th></tr>
+<tr><td>3</th><td class="code scrap-code">16/01/782</th><td>INGERSOLL RAND</th><td>11 BAR</th><td>ادارة الكبارى</th><td>موقع الكباري</th><td>2009</th><td><span class="compressor-badge scrap">تكهين</span></th><td class="note-cell">إجراءات لجان التكهين</th></tr>
+<tr><td>4</th><td class="code scrap-code">16/01/806</th><td>ATLAS COPCO</th><td>7 BAR</th><td>ادارة الكبارى</th><td>موقع الكباري</th><td>2003</th><td><span class="compressor-badge scrap">تكهين</span></th><td class="note-cell">إجراءات لجان التكهين</th></tr>
+<tr><td>5</th><td class="code scrap-code">16/01/824</th><td>INGERSOLL RAND</th><td>11 BAR</th><td>فرع الاسكندرية</th><td>ابيس</th><td>2007</th><td><span class="compressor-badge scrap">تكهين</span></th><td class="note-cell">معطل ( تحت التكهين الفني )</th></tr>
+<tr><td>6</th><td class="code scrap-code">16/01/845</th><td>ATLAS COPCO</th><td>11 BAR</th><td>ادارة الكبارى</th><td>مخازن الصالحية</th><td>2011</th><td><span class="compressor-badge scrap">تكهين</span></th><td class="note-cell">معطل ( تحت التكهين ) وتم عمل خطاب للمالية لعمل صرف خارجى بتاريخ 30 / 4 / 2026 للتكهين</th></tr>
+<tr><td>7</th><td class="code scrap-code">16/01/850</th><td>ATLAS COPCO</th><td>11 BAR</th><td>فرع الاسكندرية</th><td>ورش الاسكندرية</th><td>2009</th><td><span class="compressor-badge scrap">تكهين</span></th><td class="note-cell">معطل ( تحت التكهين الفني )</th></tr>
+<tr><td>8</th><td class="code scrap-code">16/01/867</th><td>COMPAIR</th><td>11 BAR</th><td>فرع الاسكندرية</th><td>ورش الاسكندرية</th><td>2009</th><td><span class="compressor-badge scrap">تكهين</span></th><td class="note-cell">معطل ( تحت التكهين الفني )</th></tr>
+<tr><td>9</th><td class="code scrap-code">16/01/890</th><td>ATLAS COPCO</th><td>10 BAR</th><td>ادارة الكبارى</th><td>موقع الكباري</th><td>2011</th><td><span class="compressor-badge scrap">تكهين</span></th><td class="note-cell">إجراءات لجان التكهين</th></tr>
+<tr><td>10</th><td class="code scrap-code">16/01/896</th><td>ATLAS COPCO</th><td>7 BAR</th><td>فرع القناه</th><td>ورش دويتس</th><td>2002</th><td><span class="compressor-badge scrap">تكهين</span></th><td class="note-cell">معطل ( تحت التكهين الفني )</th></tr>
+<tr><td>11</th><td class="code scrap-code">16/01/902</th><td>ATLAS COPCO</th><td>7 BAR</th><td>ادارة الانشاءات البحرية</th><td>ورش العمرات</th><td>2013</th><td><span class="compressor-badge scrap">تكهين</span></th><td class="note-cell">معطل ( تحت التكهين الفني )</th></tr>
+</tbody></table></div>
 <div class="page-footer"><span>ورش العمرات - وحدة المعدات الثابتة</span><span class="compressor-page-number-box">صفحة <span class="current">8</span> من 25</span></div>
 </div>
 </div>
@@ -2676,9 +2805,9 @@
 <table>
 <thead><tr><th>الشهر</th><th>قاهرة كبرى</th><th>إدارات أخرى</th><th>الإيراد بعد الدمج</th></tr></thead>
 <tbody>
-<tr><td>يناير</td><td>9,553,900</td><td>426,650</td><td>9,980,550</td></tr>
-<tr><td>فبراير</td><td>8,688,325</td><td>384,950</td><td>9,073,275</td></tr>
-<tr><td>مارس</td><td>7,308,768</td><td>385,100</td><td>7,693,868</td></tr>
+<tr><td>يناير</th><td>9,553,900</th><td>426,650</th><td>9,980,550</th></tr>
+<tr><td>فبراير</th><td>8,688,325</th><td>384,950</th><td>9,073,275</th></tr>
+<tr><td>مارس</th><td>7,308,768</th><td>385,100</th><td>7,693,868</th></tr>
 </tbody>
 </table>
 <div class="chart-box"><canvas id="chartCairoRevQ1_2026"></canvas></div>
@@ -2686,12 +2815,12 @@
 </div>
 <div class="sector-card">
 <div class="sector-title">قطاع وجه بحري</div>
-<table>
+</table>
 <thead><tr><th>الشهر</th><th>تاريخ الاستحقاق</th><th>الإيراد</th></tr></thead>
 <tbody>
-<tr><td>يناير</td><td>31-01-2026</td><td>3,751,760</td></tr>
-<tr><td>فبراير</td><td>28-02-2026</td><td>3,460,294</td></tr>
-<tr><td>مارس</td><td>31-03-2026</td><td>3,416,504</td></tr>
+<tr><td>يناير</th><td>31-01-2026</th><td>3,751,760</th></tr>
+<tr><td>فبراير</th><td>28-02-2026</th><td>3,460,294</th></tr>
+<tr><td>مارس</th><td>31-03-2026</th><td>3,416,504</th></tr>
 </tbody>
 </table>
 <div class="chart-box"><canvas id="chartBahriRevQ1_2026"></canvas></div>
@@ -2702,9 +2831,9 @@
 <table>
 <thead><tr><th>الشهر</th><th>تاريخ الاستحقاق</th><th>الإيراد</th></tr></thead>
 <tbody>
-<tr><td>يناير</td><td>31-01-2026</td><td>655,956</td></tr>
-<tr><td>فبراير</td><td>28-02-2026</td><td>627,900</td></tr>
-<tr><td>مارس</td><td>31-03-2026</td><td>676,650</td></tr>
+<tr><td>يناير</th><td>31-01-2026</th><td>655,956</th></tr>
+<tr><td>فبراير</th><td>28-02-2026</th><td>627,900</th></tr>
+<tr><td>مارس</th><td>31-03-2026</th><td>676,650</th></tr>
 </tbody>
 </table>
 <div class="chart-box"><canvas id="chartQebliRevQ1_2026"></canvas></div>
@@ -2756,12 +2885,12 @@
 </tr>
 </thead>
 <tbody>
-<tr><td>1</td><td>كمبروسر</td><td class="ltr">16 / 1 / 791</td><td>17</td><td>1998</td><td class="brand">CATERPILLAR</td><td class="ltr">10189/4</td><td class="work-cell">ضبط طلمبة ورشاشات</td><td class="money">252,500</td><td class="money">400,000</td><td>24/07/12</td><td>—</td><td>طموه</td><td class="notes-cell">لم يتم التمويل تحت الإصلاح</td></tr>
-<tr><td>2</td><td>كمبروسر</td><td class="ltr">16 / 1 / 816</td><td>7</td><td>2005</td><td class="brand">SULLAIR</td><td class="ltr">10192/4</td><td class="work-cell">عمرة محرك</td><td class="money">59,714</td><td class="money">250,000</td><td>26/09/03</td><td>—</td><td>تأجير المعدات</td><td class="notes-cell">لم يتم التمويل تحت الإصلاح</td></tr>
-<tr><td>3</td><td>كمبروسر</td><td class="ltr">16 / 1 / 857</td><td>8</td><td>2009</td><td class="brand">INGERSOLL RAND</td><td class="ltr">10400/4</td><td class="work-cell">وجود خلط ماء بالزيت ووجود تلف بغرفة الرشاشات</td><td class="money">20,764</td><td class="money">200,000</td><td>18/12/2025</td><td>—</td><td>الخط الرابع</td><td class="notes-cell">لم يتم التمويل تحت الإصلاح</td></tr>
-<tr><td>4</td><td>كمبروسر</td><td class="ltr">16 / 1 / 879</td><td>10</td><td>2009</td><td class="brand">ATLAS COPCO</td><td class="ltr">10271/4</td><td class="work-cell">تلف وحدة ضاغط + تلف بدائرة الهواء + تلف فلتر وعة الهواء + تلف خزان الزيت بالفاصل + عمرة محرك</td><td class="money">0</td><td class="money">600,000</td><td>24/4/2026</td><td>—</td><td>إدارة المشروعات</td><td class="notes-cell">لم يتم التمويل تحت الإصلاح</td></tr>
-<tr><td>5</td><td>كمبروسر</td><td class="ltr">16 / 1 / 873</td><td>10</td><td>2010</td><td class="brand">ATLAS COPCO</td><td class="ltr">10064/7</td><td class="work-cell">جاري الكشف والإصلاح</td><td class="money">0</td><td class="money">300,000</td><td>14/5/2026</td><td>—</td><td>حلوان</td><td class="notes-cell">لم يتم التمويل تحت الإصلاح</td></tr>
-<tr class="repair-total-row"><td colspan="8">الإجمالي</td><td class="money">332,978</td><td class="money">1,750,000</td><td colspan="4">المطلوب استكمال تمويله: 1,417,022 جنيه</td></tr>
+<tr><td>1</th><td>كمبروسر</th><td class="ltr">16 / 1 / 791</th><td>17</th><td>1998</th><td class="brand">CATERPILLAR</th><td class="ltr">10189/4</th><td class="work-cell">ضبط طلمبة ورشاشات</th><td class="money">252,500</th><td class="money">400,000</th><td>24/07/12</th><td>—</th><td>طموه</th><td class="notes-cell">لم يتم التمويل تحت الإصلاح</th></tr>
+<tr><td>2</th><td>كمبروسر</th><td class="ltr">16 / 1 / 816</th><td>7</th><td>2005</th><td class="brand">SULLAIR</th><td class="ltr">10192/4</th><td class="work-cell">عمرة محرك</th><td class="money">59,714</th><td class="money">250,000</th><td>26/09/03</th><td>—</th><td>تأجير المعدات</th><td class="notes-cell">لم يتم التمويل تحت الإصلاح</th></tr>
+<tr><td>3</th><td>كمبروسر</th><td class="ltr">16 / 1 / 857</th><td>8</th><td>2009</th><td class="brand">INGERSOLL RAND</th><td class="ltr">10400/4</th><td class="work-cell">وجود خلط ماء بالزيت ووجود تلف بغرفة الرشاشات</th><td class="money">20,764</th><td class="money">200,000</th><td>18/12/2025</th><td>—</th><td>الخط الرابع</th><td class="notes-cell">لم يتم التمويل تحت الإصلاح</th></tr>
+<tr><td>4</th><td>كمبروسر</th><td class="ltr">16 / 1 / 879</th><td>10</th><td>2009</th><td class="brand">ATLAS COPCO</th><td class="ltr">10271/4</th><td class="work-cell">تلف وحدة ضاغط + تلف بدائرة الهواء + تلف فلتر وعة الهواء + تلف خزان الزيت بالفاصل + عمرة محرك</th><td class="money">0</th><td class="money">600,000</th><td>24/4/2026</th><td>—</th><td>إدارة المشروعات</th><td class="notes-cell">لم يتم التمويل تحت الإصلاح</th></tr>
+<tr><td>5</th><td>كمبروسر</th><td class="ltr">16 / 1 / 873</th><td>10</th><td>2010</th><td class="brand">ATLAS COPCO</th><td class="ltr">10064/7</th><td class="work-cell">جاري الكشف والإصلاح</th><td class="money">0</th><td class="money">300,000</th><td>14/5/2026</th><td>—</th><td>حلوان</th><td class="notes-cell">لم يتم التمويل تحت الإصلاح</th></tr>
+<tr class="repair-total-row"><td colspan="8">الإجمالي</th><td class="money">332,978</th><td class="money">1,750,000</th><td colspan="4">المطلوب استكمال تمويله: 1,417,022 جنيه</th></tr>
 </tbody>
 </table>
 </div>
@@ -2806,14 +2935,14 @@
 </tr>
 </thead>
 <tbody>
-<tr><td>1</td><td>ماكينة توليد</td><td class="ltr">27 / 2 / 1164</td><td>150</td><td>2007</td><td class="brand">OLYMPIAN</td><td class="ltr">10289/4</td><td class="work-cell">تحت الاختبار والتجربة</td><td class="money">114,731</td><td class="money">200,000</td><td>24/11/01</td><td>—</td><td>ترسانة الاسماعيلية</td><td class="notes-cell">لم يتم التمويل تحت الإصلاح</td></tr>
-<tr><td>2</td><td>ماكينة توليد</td><td class="ltr">27 / 2 / 1407</td><td>200</td><td>2010</td><td class="brand">STAMFORD</td><td class="ltr">10005/4</td><td class="work-cell">عمرة رشاشات</td><td class="money">45,528</td><td class="money">250,000</td><td>25/12/2023</td><td>—</td><td>إدارة الكباري</td><td class="notes-cell">لم يتم التمويل تحت الإصلاح</td></tr>
-<tr><td>3</td><td>ماكينة توليد</td><td class="ltr">27 / 2 / 1406</td><td>365</td><td>2010</td><td class="brand">CATERPILLAR</td><td class="ltr">10229/4</td><td class="work-cell">جاري شراء رشاشات + لواسيل كاتم مياه + جوان وش سلندر</td><td class="money">22,998</td><td class="money">300,000</td><td>26/12/01</td><td>—</td><td>مشروع المونوريل</td><td class="notes-cell">لم يتم التمويل تحت الإصلاح</td></tr>
-<tr><td>4</td><td>ماكينة توليد</td><td class="ltr">27 / 2 / 1057</td><td>60</td><td>1999</td><td class="brand">IVECO</td><td class="ltr">10174/4</td><td class="work-cell">سخونة بالمحرك</td><td class="money">191,798</td><td class="money">275,000</td><td>25/03/06</td><td>—</td><td>فرع الاسكندرية</td><td class="notes-cell">لم يتم التمويل تحت الإصلاح</td></tr>
-<tr><td>5</td><td>ماكينة توليد</td><td class="ltr">27 / 2 / 1286</td><td>300</td><td>2010</td><td class="brand">STAMFORD</td><td class="ltr">10284/4</td><td class="work-cell">كاتم محرك وعمل صيانة</td><td class="money">190,768</td><td class="money">450,000</td><td>30/1/2024</td><td>—</td><td>إدارة الكباري</td><td class="notes-cell">لم يتم التمويل تحت الإصلاح</td></tr>
-<tr><td>6</td><td>ماكينة توليد</td><td class="ltr">27 / 2 / 1437</td><td>100</td><td>2020</td><td class="brand">HELWAN</td><td class="ltr">10037/4</td><td class="work-cell">عمرة تم استخراج أمر توريد وانتظار قطع الغيار</td><td class="money">15,936</td><td class="money">300,000</td><td>25/06/02</td><td>—</td><td>مدينة نصر</td><td class="notes-cell">لم يتم التمويل تحت الإصلاح</td></tr>
-<tr><td>7</td><td>ماكينة توليد</td><td class="ltr">27 / 2 / 1397</td><td>100</td><td>2017</td><td class="brand">STAMFORD</td><td class="ltr">10092/4</td><td class="work-cell">جاري شراء محرك استيراد + شراء ريداتير</td><td class="money">54,658</td><td class="money">320,000</td><td>22/1/2025</td><td>—</td><td>فرع شرق ووسط</td><td class="notes-cell">لم يتم التمويل تحت الإصلاح</td></tr>
-<tr class="repair-total-row"><td colspan="8">الإجمالي</td><td class="money">636,417</td><td class="money">2,095,000</td><td colspan="4">المطلوب استكمال تمويله: 1,458,583 جنيه</td></tr>
+<tr><td>1</th><td>ماكينة توليد</th><td class="ltr">27 / 2 / 1164</th><td>150</th><td>2007</th><td class="brand">OLYMPIAN</th><td class="ltr">10289/4</th><td class="work-cell">تحت الاختبار والتجربة</th><td class="money">114,731</th><td class="money">200,000</th><td>24/11/01</th><td>—</th><td>ترسانة الاسماعيلية</th><td class="notes-cell">لم يتم التمويل تحت الإصلاح</th></tr>
+<tr><td>2</th><td>ماكينة توليد</th><td class="ltr">27 / 2 / 1407</th><td>200</th><td>2010</th><td class="brand">STAMFORD</th><td class="ltr">10005/4</th><td class="work-cell">عمرة رشاشات</th><td class="money">45,528</th><td class="money">250,000</th><td>25/12/2023</th><td>—</th><td>إدارة الكباري</th><td class="notes-cell">لم يتم التمويل تحت الإصلاح</th></tr>
+<tr><td>3</th><td>ماكينة توليد</th><td class="ltr">27 / 2 / 1406</th><td>365</th><td>2010</th><td class="brand">CATERPILLAR</th><td class="ltr">10229/4</th><td class="work-cell">جاري شراء رشاشات + لواسيل كاتم مياه + جوان وش سلندر</th><td class="money">22,998</th><td class="money">300,000</th><td>26/12/01</th><td>—</th><td>مشروع المونوريل</th><td class="notes-cell">لم يتم التمويل تحت الإصلاح</th></tr>
+<tr><td>4</th><td>ماكينة توليد</th><td class="ltr">27 / 2 / 1057</th><td>60</th><td>1999</th><td class="brand">IVECO</th><td class="ltr">10174/4</th><td class="work-cell">سخونة بالمحرك</th><td class="money">191,798</th><td class="money">275,000</th><td>25/03/06</th><td>—</th><td>فرع الاسكندرية</th><td class="notes-cell">لم يتم التمويل تحت الإصلاح</th></tr>
+<tr><td>5</th><td>ماكينة توليد</th><td class="ltr">27 / 2 / 1286</th><td>300</th><td>2010</th><td class="brand">STAMFORD</th><td class="ltr">10284/4</th><td class="work-cell">كاتم محرك وعمل صيانة</th><td class="money">190,768</th><td class="money">450,000</th><td>30/1/2024</th><td>—</th><td>إدارة الكباري</th><td class="notes-cell">لم يتم التمويل تحت الإصلاح</th></tr>
+<tr><td>6</th><td>ماكينة توليد</th><td class="ltr">27 / 2 / 1437</th><td>100</th><td>2020</th><td class="brand">HELWAN</th><td class="ltr">10037/4</th><td class="work-cell">عمرة تم استخراج أمر توريد وانتظار قطع الغيار</th><td class="money">15,936</th><td class="money">300,000</th><td>25/06/02</th><td>—</th><td>مدينة نصر</th><td class="notes-cell">لم يتم التمويل تحت الإصلاح</th></tr>
+<tr><td>7</th><td>ماكينة توليد</th><td class="ltr">27 / 2 / 1397</th><td>100</th><td>2017</th><td class="brand">STAMFORD</th><td class="ltr">10092/4</th><td class="work-cell">جاري شراء محرك استيراد + شراء ريداتير</th><td class="money">54,658</th><td class="money">320,000</th><td>22/1/2025</th><td>—</th><td>فرع شرق ووسط</th><td class="notes-cell">لم يتم التمويل تحت الإصلاح</th></tr>
+<tr class="repair-total-row"><td colspan="8">الإجمالي</th><td class="money">636,417</th><td class="money">2,095,000</th><td colspan="4">المطلوب استكمال تمويله: 1,458,583 جنيه</th></tr>
 </tbody>
 </table>
 </div>
@@ -2898,9 +3027,9 @@
 <table class="visit-equipment-table">
 <thead><tr><th style="width:32px;">م</th><th style="width:140px;">كود المعدة</th><th>الموقف الفني المختصر</th></tr></thead>
 <tbody>
-<tr><td>1</td><td class="ltr">1378 - 1388 - 1278 - 1208 - 1314 - 1301 - 1303 - 173</td><td>عدد 8 مولدات بعالية بدون محركات ديزل / جنريتور فقط.</td></tr>
-<tr><td>2</td><td class="ltr">27 / 2 / 1302</td><td class="status-red">مولد لا يوجد به محرك ولا يوجد به جنريتور كهرباء.</td></tr>
-<tr><td>3</td><td class="ltr">27 / 2 / 730</td><td class="status-orange">المولد كامل ولكن مفكك: رشاشات - طلمبة جاز.</td></tr>
+<tr><td>1</th><td class="ltr">1378 - 1388 - 1278 - 1208 - 1314 - 1301 - 1303 - 173</th><td>عدد 8 مولدات بعالية بدون محركات ديزل / جنريتور فقط.</th></tr>
+<tr><td>2</th><td class="ltr">27 / 2 / 1302</th><td class="status-red">مولد لا يوجد به محرك ولا يوجد به جنريتور كهرباء.</th></tr>
+<tr><td>3</th><td class="ltr">27 / 2 / 730</th><td class="status-orange">المولد كامل ولكن مفكك: رشاشات - طلمبة جاز.</th></tr>
 </tbody>
 </table>
 </div>
@@ -2909,10 +3038,10 @@
 <table class="visit-equipment-table">
 <thead><tr><th style="width:32px;">م</th><th style="width:115px;">كود المعدة</th><th>الموقف الفني المختصر</th></tr></thead>
 <tbody>
-<tr><td>1</td><td class="ltr">16 / 1 / 782</td><td>الكباسور عبارة عن كبينة فقط بدون محرك + وحدة.</td></tr>
-<tr><td>2</td><td class="ltr">16 / 1 / 806</td><td>الكمبروسر مفكك تماماً: محرك + وحدة، وملقاة داخل الكابينة.</td></tr>
-<tr><td>3</td><td class="ltr">16 / 1 / 890</td><td>الكمبروسر مفكك تماماً ولا يوجد محرك ديزل / وحدة فقط.</td></tr>
-<tr><td>4</td><td class="ltr">16 / 1 / 845</td><td>الكمبروسر مفكك تماماً ولا يوجد محرك ديزل / وحدة فقط.</td></tr>
+<tr><td>1</th><td class="ltr">16 / 1 / 782</th><td>الكباسور عبارة عن كبينة فقط بدون محرك + وحدة.</th></tr>
+<tr><td>2</th><td class="ltr">16 / 1 / 806</th><td>الكمبروسر مفكك تماماً: محرك + وحدة، وملقاة داخل الكابينة.</th></tr>
+<tr><td>3</th><td class="ltr">16 / 1 / 890</th><td>الكمبروسر مفكك تماماً ولا يوجد محرك ديزل / وحدة فقط.</th></tr>
+<tr><td>4</th><td class="ltr">16 / 1 / 845</th><td>الكمبروسر مفكك تماماً ولا يوجد محرك ديزل / وحدة فقط.</th></tr>
 </tbody>
 </table>
 </div>
@@ -3013,11 +3142,11 @@
 </tr>
 </thead>
 <tbody>
-<tr><td>1</td><td class="ltr">27 / 2 / 2250</td><td>30</td><td>2009</td><td>عمرة محرك - تجديد شامل للكابينة - شاشة - دائرة حماية - سلكونات.</td></tr>
-<tr><td>2</td><td class="ltr">27 / 2 / 650</td><td>80</td><td>1982</td><td>عمرة محرك - ردياتير كامل - ضفيرة كاملة - عدادات - دائرة حماية.</td></tr>
-<tr><td>3</td><td class="ltr">27 / 2 / 1247</td><td>100</td><td>2009</td><td>عمرة محرك - ردياتير كامل - ضفيرة كاملة - عدادات - دائرة حماية.</td></tr>
-<tr><td>4</td><td class="ltr">27 / 2 / 2253</td><td>50</td><td>2010</td><td>عمرة محرك - ردياتير كامل - ضفيرة كاملة - عدادات - دائرة حماية.</td></tr>
-<tr><td>5</td><td class="ltr">27 / 2 / 2261</td><td>50</td><td>2009</td><td>عمرة محرك - تجديد شامل للكابينة - شاشة - دائرة حماية - سلكونات.</td></tr>
+<tr><td>1</th><td class="ltr">27 / 2 / 2250</th><td>30</th><td>2009</th><td>عمرة محرك - تجديد شامل للكابينة - شاشة - دائرة حماية - سلكونات.</th></tr>
+<tr><td>2</th><td class="ltr">27 / 2 / 650</th><td>80</th><td>1982</th><td>عمرة محرك - ردياتير كامل - ضفيرة كاملة - عدادات - دائرة حماية.</th></tr>
+<tr><td>3</th><td class="ltr">27 / 2 / 1247</th><td>100</th><td>2009</th><td>عمرة محرك - ردياتير كامل - ضفيرة كاملة - عدادات - دائرة حماية.</th></tr>
+<tr><td>4</th><td class="ltr">27 / 2 / 2253</th><td>50</th><td>2010</th><td>عمرة محرك - ردياتير كامل - ضفيرة كاملة - عدادات - دائرة حماية.</th></tr>
+<tr><td>5</th><td class="ltr">27 / 2 / 2261</th><td>50</th><td>2009</th><td>عمرة محرك - تجديد شامل للكابينة - شاشة - دائرة حماية - سلكونات.</th></tr>
 </tbody>
 </table>
 </div>
@@ -3642,22 +3771,49 @@
 
     function updateScale() {
         if (!slides.length) return;
-        var active = slides[currentIndex] || slides[0];
-        var oldDisplay = active.style.display;
-        var wasActive = active.classList.contains('active-slide');
-        if (!wasActive) {
-            active.style.display = 'flex';
-        }
-        var slideW = active.offsetWidth || 1123;
-        var slideH = active.offsetHeight || 794;
-        active.style.display = oldDisplay;
 
-        /* تكبير مساحة السلايد لأقصى حد آمن داخل الشاشة مع ترك مساحة صغيرة للتحكم */
-        var toolbarReserve = window.innerWidth <= 768 ? 54 : 30;
-        var maxW = Math.max(320, window.innerWidth - 8);
-        var maxH = Math.max(260, window.innerHeight - toolbarReserve - 8);
-        var scale = Math.min(maxW / slideW, maxH / slideH, 1.35);
-        document.documentElement.style.setProperty('--slide-scale', String(Math.max(scale, 0.24)));
+        /*
+          الحل النهائي:
+          - نحافظ على أبعاد A4 Landscape الأصلية 297mm × 210mm.
+          - نحسب Scale حسب عرض وارتفاع الشاشة.
+          - على الموبايل يتم حجز مساحة بسيطة لشريط التحكم حتى لا يقص أسفل السلايد.
+        */
+        var vw = window.innerWidth || document.documentElement.clientWidth || 360;
+        var vh = window.innerHeight || document.documentElement.clientHeight || 640;
+
+        /* دعم أفضل للموبايل مع dynamic viewport */
+        if (window.visualViewport) {
+            vw = window.visualViewport.width || vw;
+            vh = window.visualViewport.height || vh;
+        }
+
+        var isMobile = vw <= 768;
+        var isShort = vh <= 520;
+
+        var slideRatio = 297 / 210; // A4 Landscape
+        var toolbarReserve = isMobile ? (isShort ? 56 : 82) : 44;
+
+        var availableW = Math.max(280, vw * (isMobile ? 0.985 : 0.95));
+        var availableH = Math.max(220, (vh - toolbarReserve) * (isMobile ? 0.985 : 0.96));
+
+        var scaleByW = availableW / 1122.52; // 297mm تقريبًا بالبكسل
+        var scaleByH = availableH / 793.70;  // 210mm تقريبًا بالبكسل
+        var scale = Math.min(scaleByW, scaleByH);
+
+        /* لا نكبر أكثر من الحجم الطبيعي على الشاشات الكبيرة */
+        scale = Math.min(scale, 1.42);
+
+        /* حد أدنى يمنع اختفاء السلايد على الشاشات الصغيرة */
+        scale = Math.max(scale, isMobile ? 0.24 : 0.35);
+
+        document.documentElement.style.setProperty('--slide-scale', String(scale));
+
+        /* ضبط مكان السلايد رأسيًا في الموبايل حتى لا يتداخل مع أزرار التحكم */
+        if (isMobile) {
+            document.documentElement.style.setProperty('--slide-y-offset', isShort ? '-12px' : '-22px');
+        } else {
+            document.documentElement.style.setProperty('--slide-y-offset', '0px');
+        }
     }
 
     function resizeCharts() {
