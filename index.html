@@ -1,0 +1,3816 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="ar">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>التقرير المالي الربعي المجمع - المقاولون العرب</title>
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
+<!-- Fonts & Icons -->
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+        /* متغيرات الألوان الموحدة */
+        :root {
+            --primary-gradient: linear-gradient(135deg, #0f3443, #34e89e);
+            --secondary-gradient: linear-gradient(135deg, #1a2a6c, #000000);
+            --corporate-gold: #fdbb2d;
+            --corporate-blue: #1a2a6c;
+            --profit-green: #27ae60;
+            --expense-red: #e74c3c;
+            --ac-yellow: #FFD700;
+            --ac-black: #121212;
+            --ac-dark: #1E1E1E;
+            --bg-light: #f0f3f8;
+            --white: #ffffff;
+            --text-dark: #2c3e50;
+            --border-color: #d4dde6;
+            
+            /* متغيرات الغلاف الجديد */
+            --primary-deep: #0B2027;
+            --secondary-gold: #CFB53B;
+            --accent-teal: #1E4A5F;
+            --accent-copper: #B87333;
+            --light-cream: #F5F0E6;
+            --pure-white: #FFFFFF;
+            --elegant-gray: #2C3E50;
+        }
+
+        /* إعدادات الطباعة: A4 Landscape ثابت */
+        @page {
+            size: A4 landscape;
+            margin: 0;
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: #bdc3c7;
+            margin: 0;
+            padding: 20px 0;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        /* الصفحة الواحدة - بحجم A4 لاندسكيب ثابت */
+        .page {
+            width: 297mm;
+            height: 210mm;
+            background: var(--bg-light);
+            margin: 15px auto;
+            padding: 0;
+            box-sizing: border-box;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            page-break-after: always;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        @media print {
+            body { background: white; padding: 0; }
+            .page { 
+                margin: 0 auto; 
+                box-shadow: none; 
+                page-break-after: always;
+                border-radius: 0;
+                overflow: hidden;
+            }
+        }
+
+        .page-content {
+            padding: 8mm 10mm;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            box-sizing: border-box;
+        }
+
+        .header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: var(--primary-gradient);
+            padding: 12px 20px;
+            border-radius: 10px;
+            color: white;
+            margin-bottom: 12px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header-titles h1 { 
+            margin: 0; 
+            font-size: 22px; 
+            font-weight: 900;
+            color: var(--white);
+        }
+
+        .header-titles p {
+            margin: 3px 0 0;
+            font-size: 16px;
+            opacity: 0.95;
+        }
+
+        .sectors-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            flex: 1;
+            min-height: 0;
+        }
+
+        .sector-card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.02);
+            height: 100%;
+        }
+
+        .sector-title {
+            font-weight: 900;
+            color: var(--corporate-blue);
+            margin-bottom: 8px;
+            padding-right: 8px;
+            border-right: 4px solid var(--corporate-gold);
+            font-size: 14px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 11px;
+            margin-bottom: 6px;
+        }
+
+        th { 
+            background: #f0f4fa; 
+            padding: 5px; 
+            border: 1px solid var(--border-color);
+            color: #1e3c72;
+            font-weight: 700;
+        }
+
+        td { 
+            padding: 5px; 
+            text-align: center; 
+            border: 1px solid var(--border-color);
+            font-weight: 600;
+        }
+
+        .chart-box { 
+            height: 120px; 
+            width: 100%;
+            margin: 3px 0;
+        }
+
+        .total-badge {
+            background: #e7f0fd;
+            color: var(--corporate-blue);
+            padding: 6px;
+            border-radius: 6px;
+            text-align: center;
+            font-size: 12px;
+            font-weight: 900;
+            margin-top: 5px;
+            border: 1px solid #c0d4f0;
+        }
+
+        .analysis-container {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 12px;
+            flex: 1;
+            min-height: 0;
+        }
+
+        .grand-total-display {
+            background: var(--secondary-gradient);
+            color: white;
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .page-footer {
+            margin-top: 8px;
+            padding-top: 5px;
+            border-top: 1px solid #a0b8cc;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 10px;
+            color: #3a5f7a;
+        }
+
+        /* --- ترقيم الصفحات المطور (المميز) --- */
+        .page-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            background: linear-gradient(145deg, #ffffff, #f0f4fa);
+            padding: 5px 18px;
+            border-radius: 30px;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08), inset 0 1px 1px rgba(255,255,255,0.8);
+            border: 1px solid #cbd5e0;
+            color: #1e3c72;
+            font-weight: 700;
+            font-size: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .page-number i {
+            color: var(--corporate-gold);
+            font-size: 12px;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .page-number .current-page {
+            background: var(--corporate-blue);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 20px;
+            margin: 0 3px;
+            font-weight: 900;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+        }
+
+        .page-number .total-pages {
+            background: transparent;
+            color: var(--text-dark);
+            font-weight: 600;
+        }
+
+        /* أنماط الغلاف الجديد - نسخة مصححة */
+        .cover-page-new {
+            width: 297mm;
+            height: 210mm;
+            background: var(--pure-white);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            margin: 15px auto;
+            border-radius: 8px;
+            page-break-after: always;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            color-adjust: exact !important;
+        }
+
+        /* الخلفية المزخرفة - تطبق على العنصر نفسه لضمان عدم تغطية المحتوى */
+        .cover-page-new {
+            background: 
+                radial-gradient(circle at 0% 0%, rgba(207, 181, 59, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 100% 100%, rgba(11, 32, 39, 0.15) 0%, transparent 50%),
+                repeating-linear-gradient(45deg, rgba(207, 181, 59, 0.05) 0px, rgba(207, 181, 59, 0.05) 2px, transparent 2px, transparent 8px),
+                var(--pure-white);
+        }
+
+        .prestige-strip {
+            height: 10px;
+            background: linear-gradient(90deg, var(--primary-deep) 0%, var(--secondary-gold) 50%, var(--primary-deep) 100%);
+            z-index: 10;
+            position: relative;
+            width: 100%;
+        }
+
+        .cover-header-new {
+            padding: 30px 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 15;
+            position: relative;
+            background: rgba(255, 255, 255, 0.85);
+            border-bottom: 2px solid var(--secondary-gold);
+        }
+
+        .logo-group {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .logo-badge {
+            width: 65px;
+            height: 65px;
+            background: linear-gradient(135deg, var(--primary-deep), var(--accent-teal));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--secondary-gold);
+        }
+
+        .logo-badge i {
+            font-size: 30px;
+            color: var(--secondary-gold);
+        }
+
+        .brand-main {
+            font-size: 22px;
+            font-weight: 900;
+            color: var(--primary-deep);
+            margin: 0;
+        }
+
+        .brand-sub {
+            font-size: 14px;
+            color: var(--accent-copper);
+            font-weight: 700;
+        }
+
+        .hero-section {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 40px;
+            padding: 20px 60px;
+            align-items: center;
+            z-index: 15;
+            position: relative;
+        }
+
+        .floating-badge {
+            display: inline-block;
+            padding: 8px 25px;
+            background: linear-gradient(135deg, var(--secondary-gold), var(--accent-copper));
+            color: var(--primary-deep);
+            font-weight: 800;
+            font-size: 14px;
+            border-radius: 30px;
+            margin-bottom: 25px;
+            border: none;
+        }
+
+        .main-headline {
+            font-size: 45px;
+            font-weight: 900;
+            color: var(--primary-deep);
+            margin: 0;
+            line-height: 1.1;
+        }
+
+        .main-headline span {
+            color: var(--secondary-gold);
+            display: block;
+            font-size: 30px;
+        }
+
+        .description-card {
+            margin-top: 30px;
+            padding: 25px;
+            background: rgba(255,255,255,0.95);
+            border-radius: 15px;
+            border-right: 6px solid var(--secondary-gold);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+
+        .description-text {
+            font-size: 18px;
+            color: var(--elegant-gray);
+            line-height: 1.8;
+            margin: 0;
+        }
+
+        .tech-showcase {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .tech-item {
+            width: 50px;
+            height: 50px;
+            background: var(--pure-white);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent-teal);
+            border: 2px solid var(--secondary-gold);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+        }
+
+        .image-frame-modern {
+            width: 100%;
+            height: 300px;
+            border-radius: 30px;
+            overflow: hidden;
+            border: 4px solid var(--secondary-gold);
+            position: relative;
+            background: #f0f0f0;
+        }
+
+        .image-frame-modern img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .modern-footer {
+            padding: 20px 60px;
+            background: var(--primary-deep);
+            color: var(--pure-white);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 15;
+            border-top: 4px solid var(--secondary-gold);
+            position: relative;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .author-box {
+            flex: 1;
+        }
+
+        .author-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .author-name {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--secondary-gold);
+        }
+
+        .date-box-modern {
+            text-align: left;
+        }
+
+        .date-value {
+            font-size: 26px;
+            font-weight: 800;
+            color: var(--secondary-gold);
+        }
+
+        /* ترقيم صفحة الغلاف */
+        .cover-pagination {
+            position: absolute;
+            bottom: 10px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            z-index: 30;
+        }
+
+        /* باقي الأنماط كما هي */
+        .index-page {
+            background: #eef2f7;
+        }
+
+        .index-header {
+            background: var(--corporate-blue);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .index-header h2 {
+            font-size: 28px;
+            margin: 0;
+            font-weight: 900;
+        }
+
+        .index-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            flex: 1;
+        }
+
+        .index-item {
+            background: white;
+            padding: 8px;
+            border-radius: 15px;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.03);
+            border-right: 6px solid var(--corporate-gold);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .index-icon {
+            font-size: 36px;
+            color: var(--corporate-blue);
+            width: 60px;
+            text-align: center;
+        }
+
+        .index-content h3 {
+            font-size: 16px;
+            margin: 0 0 3px;
+            color: #0b2b40;
+            font-weight: 900;
+        }
+
+        .index-content p {
+            margin: 0;
+            color: #3f627c;
+            font-size: 11px;
+        }
+
+        .index-page-num {
+            background: var(--primary-gradient);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 30px;
+            font-weight: 900;
+            margin-right: auto;
+            font-size: 16px;
+        }
+
+        .kpi-grid { 
+            display: grid; 
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 10px; 
+            margin-bottom: 10px;
+        }
+        
+        .kpi-card {
+            background: var(--gray-light, #f8f9fa); 
+            border: 1px solid var(--border-color);
+            border-radius: 10px; 
+            padding: 10px;
+        }
+
+        .kpi-card h3 { 
+            margin: 0 0 6px 0; 
+            font-size: 14px; 
+            color: var(--ac-black); 
+            display: flex; 
+            align-items: center; 
+            gap: 6px; 
+        }
+        
+        .date-tag { 
+            font-size: 12px; 
+            color: #777; 
+            font-weight: 600; 
+        }
+        
+        .price-row { 
+            display: flex; 
+            justify-content: space-between; 
+            margin: 3px 0; 
+            padding: 3px 0; 
+            border-bottom: 1px dashed #ccc; 
+            font-size: 11px;
+        }
+        
+        .growth-up { 
+            color: #2ecc71; 
+            font-weight: 900; 
+            font-size: 12px; 
+            text-align: left;
+        }
+        .growth-down { 
+            color: #e74c3c; 
+            font-weight: 900; 
+            font-size: 12px; 
+            text-align: left;
+        }
+
+        .visual-section {
+            display: grid; 
+            grid-template-columns: 1fr; 
+            gap: 10px; 
+            flex: 1; 
+            min-height: 0;
+        }
+
+        .chart-inner { 
+            width: 100%; 
+            height: 220px; 
+            position: relative; 
+        }
+
+        .trend-chart-box {
+            background: white; 
+            border: 1px solid var(--border-color); 
+            border-radius: 10px;
+            padding: 10px; 
+            display: flex; 
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .fixed-chart-height {
+            height: 280px;
+        }
+
+        /* أنماط جديدة لصفحات الصور */
+        .image-grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            flex: 1;
+            min-height: 0;
+        }
+
+        .image-card {
+            background: white;
+            border-radius: 15px;
+            padding: 15px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            border: 1px solid var(--border-color);
+            transition: transform 0.3s ease;
+        }
+
+        .image-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+        }
+
+        .image-title {
+            background: linear-gradient(135deg, #1a2a6c, #0f3443);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            font-weight: 900;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .image-title i {
+            color: var(--ac-yellow);
+        }
+
+        .image-container {
+            flex: 1;
+            background: #f8f9fa;
+            border-radius: 10px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px dashed var(--border-color);
+            min-height: 250px;
+        }
+
+        .image-container img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .image-caption {
+            margin-top: 15px;
+            padding: 10px;
+            background: #f0f4fa;
+            border-radius: 8px;
+            font-size: 13px;
+            color: var(--corporate-blue);
+            font-weight: 600;
+            text-align: center;
+            border-right: 4px solid var(--corporate-gold);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+
+        .status-before {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .status-after {
+            background: #27ae60;
+            color: white;
+        }
+
+        .project-info {
+            background: linear-gradient(135deg, #1a2a6c20, #0f344320);
+            border-radius: 10px;
+            padding: 10px 15px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid var(--border-color);
+        }
+
+        .project-info-item {
+            text-align: center;
+        }
+
+        .project-info-label {
+            font-size: 11px;
+            color: #666;
+        }
+
+        .project-info-value {
+            font-size: 16px;
+            font-weight: 900;
+            color: var(--corporate-blue);
+        }
+
+        /* أنماط جديدة لصفحة الاختبارات */
+        .test-card {
+            background: linear-gradient(135deg, #f8f9fa, #ffffff);
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+
+        .test-header {
+            background: linear-gradient(135deg, #1a2a6c, #0f3443);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .test-header i {
+            color: var(--ac-yellow);
+            font-size: 24px;
+        }
+
+        .test-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+        }
+
+        .test-table th {
+            background: #1a2a6c;
+            color: white;
+            padding: 8px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .test-table td {
+            padding: 8px;
+            font-size: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        .test-table tr:last-child td {
+            font-weight: 900;
+            background: #e8f0fe;
+        }
+
+        .test-result-pass {
+            color: #27ae60;
+            font-weight: 900;
+        }
+
+        .test-result-fail {
+            color: #e74c3c;
+            font-weight: 900;
+        }
+
+        .test-summary {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .test-summary-item {
+            background: linear-gradient(135deg, #1a2a6c, #0f3443);
+            color: white;
+            padding: 10px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .test-summary-value {
+            font-size: 18px;
+            font-weight: 900;
+            color: var(--ac-yellow);
+        }
+
+        .test-summary-label {
+            font-size: 11px;
+            opacity: 0.9;
+        }
+
+        /* أنماط الجداول الجديدة */
+        .table-container {
+            background: white;
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            border: 1px solid var(--border-color);
+        }
+
+        .table-header {
+            background: linear-gradient(135deg, #1a2a6c, #0f3443);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            font-weight: 700;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .table-header i {
+            color: var(--ac-yellow);
+        }
+
+        .status-tag {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 15px;
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        .status-tag.done {
+            background: #27ae60;
+            color: white;
+        }
+
+        .status-tag.scrap {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .status-tag.repair {
+            background: #f39c12;
+            color: white;
+        }
+
+        .status-tag.waiting {
+            background: #f39c12;
+            color: white;
+        }
+
+        /* تنسيق الجداول للتمرير */
+        .table-scroll {
+            overflow-x: auto;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        @media print {
+            .cover-page-new {
+                width: 297mm !important;
+                height: 210mm !important;
+                margin: 0 auto !important;
+                border-radius: 0 !important;
+                box-shadow: none !important;
+                overflow: hidden !important;
+            }
+            .cover-page-new img {
+                width: 100% !important;
+                height: 100% !important;
+                object-fit: fill !important;
+                object-position: center center !important;
+            }
+        }
+
+
+        /* ===== شرائح فرز كمبروسرات الهواء المضافة بعد Slide 3 ===== */
+        .compressor-report-page {
+            background:#f8fafc;
+        }
+        .compressor-report-page .page-content {
+            padding: 7mm 9mm;
+        }
+        .compressor-header-corporate {
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            color: white;
+            padding: 11px 18px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            border-right: 5px solid #ea580c;
+            box-shadow: 0 8px 18px rgba(15,23,42,.12);
+        }
+        .compressor-header-corporate h1 {
+            margin:0;
+            font-size: 19px;
+            font-weight: 900;
+        }
+        .compressor-header-corporate p {
+            margin: 3px 0 0;
+            font-size: 12px;
+            color: #cbd5e1;
+            font-weight: 600;
+        }
+        .compressor-tag {
+            font-size: 12px;
+            font-weight: 900;
+            color:#f59e0b;
+            white-space:nowrap;
+        }
+        .compressor-kpi-container {
+            display:grid;
+            grid-template-columns:repeat(4,1fr);
+            gap:10px;
+            margin-bottom:10px;
+        }
+        .compressor-kpi-card {
+            background:#fff;
+            border-radius:12px;
+            padding:11px 12px;
+            border-bottom:4px solid #cbd5e1;
+            box-shadow:0 2px 10px rgba(15,23,42,.08);
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+        }
+        .compressor-kpi-card.total {border-bottom-color:#3b82f6;}
+        .compressor-kpi-card.active {border-bottom-color:#16a34a;}
+        .compressor-kpi-card.broken {border-bottom-color:#ea580c;}
+        .compressor-kpi-card.scrap {border-bottom-color:#dc2626;}
+        .compressor-kpi-card h3 {margin:0;font-size:12px;color:#64748b;font-weight:800;}
+        .compressor-kpi-card .val {font-size:27px;font-weight:900;margin-top:2px;color:#0f172a;}
+        .compressor-kpi-card i {font-size:31px;opacity:.22;}
+        .compressor-dashboard-grid {
+            display:grid;
+            grid-template-columns:1.2fr .8fr;
+            gap:12px;
+            flex:1;
+            min-height:0;
+        }
+        .compressor-chart-box {
+            background:#fff;
+            border:1px solid #e2e8f0;
+            border-radius:12px;
+            padding:12px;
+            display:flex;
+            flex-direction:column;
+            min-height:0;
+            box-shadow:0 2px 10px rgba(15,23,42,.07);
+        }
+        .compressor-chart-box h4 {
+            margin:0 0 8px 0;
+            padding-bottom:6px;
+            border-bottom:1px solid #f1f5f9;
+            color:#0f172a;
+            font-size:13px;
+            font-weight:900;
+        }
+        .compressor-chart-holder {flex:1;position:relative;min-height:0;}
+        .compressor-section-title {
+            font-size:14px;
+            font-weight:900;
+            padding:7px 12px;
+            border-radius:8px;
+            margin-bottom:8px;
+            display:inline-flex;
+            align-items:center;
+            gap:8px;
+        }
+        .compressor-section-title.active {background:#dcfce7;color:#16a34a;}
+        .compressor-section-title.broken {background:#ffedd5;color:#ea580c;}
+        .compressor-section-title.scrap {background:#fee2e2;color:#dc2626;}
+        .compressor-table-box {
+            background:#fff;
+            border:1px solid #e2e8f0;
+            border-radius:12px;
+            overflow:hidden;
+            box-shadow:0 2px 10px rgba(15,23,42,.07);
+            flex:1;
+            min-height:0;
+        }
+        .compressor-report-page table {
+            width:100%;
+            border-collapse:collapse;
+            table-layout:fixed;
+            font-size:9.4px;
+            text-align:center;
+            margin:0;
+        }
+        .compressor-report-page th {
+            background:#0f172a;
+            color:#fff;
+            padding:6px 4px;
+            font-weight:800;
+            border:1px solid #1e293b;
+            line-height:1.35;
+        }
+        .compressor-report-page td {
+            padding:5px 4px;
+            border:1px solid #e2e8f0;
+            font-weight:700;
+            color:#334155;
+            line-height:1.45;
+            vertical-align:middle;
+        }
+        .compressor-report-page tr:nth-child(even) td {background:#f8fafc;}
+        .compressor-report-page .code {font-weight:900;direction:ltr;}
+        .compressor-report-page .active-code {color:#1e3a8a;}
+        .compressor-report-page .broken-code {color:#c2410c;}
+        .compressor-report-page .scrap-code {color:#b91c1c;}
+        .compressor-report-page .note-cell,
+        .compressor-report-page .fault-cell {text-align:right;font-size:8.7px;line-height:1.45;}
+        .compressor-report-page .fault-cell {color:#b91c1c;font-weight:900;}
+        .compressor-badge {
+            display:inline-block;
+            padding:2px 8px;
+            border-radius:6px;
+            font-size:9px;
+            font-weight:900;
+        }
+        .compressor-badge.active {background:#dcfce7;color:#16a34a;}
+        .compressor-badge.scrap {background:#fee2e2;color:#dc2626;}
+        .compressor-page-number-box {
+            display:inline-flex;
+            align-items:center;
+            gap:5px;
+            background:#e2e8f0;
+            padding:3px 12px;
+            border-radius:20px;
+            color:#1e293b;
+            font-weight:900;
+        }
+        .compressor-page-number-box .current {
+            background:#0f172a;
+            color:#fff;
+            padding:1px 7px;
+            border-radius:12px;
+        }
+
+
+        /* ===== إصلاحات ثابتة للرسوم البيانية Chart.js ===== */
+        canvas {
+            display: block !important;
+            width: 100% !important;
+            max-width: 100% !important;
+        }
+        .chart-box,
+        .chart-inner,
+        .compressor-chart-holder {
+            position: relative !important;
+            width: 100% !important;
+            overflow: hidden !important;
+        }
+        .chart-box { height: 130px !important; min-height: 130px !important; }
+        .chart-inner { height: 230px !important; min-height: 230px !important; }
+        .fixed-chart-height { height: 285px !important; min-height: 285px !important; }
+        .compressor-chart-holder { height: 100% !important; min-height: 310px !important; }
+        .compressor-chart-box { min-height: 365px !important; }
+        .compressor-dashboard-grid { align-items: stretch !important; }
+        @media print {
+            canvas { display:block !important; }
+            .chart-box { height: 130px !important; }
+            .chart-inner { height: 230px !important; }
+            .compressor-chart-holder { min-height: 310px !important; }
+            .compressor-chart-box { min-height: 365px !important; }
+        }
+
+
+        /* ===== شريحة بيان التمويلات المحولة لفروع الشركة لزوم الإصلاحات - تنسيق احترافي ===== */
+        .funding-transfer-page { background:#f8fafc; }
+        .funding-transfer-page .page-content{ padding: 7mm 9mm; justify-content: flex-start; }
+        .funding-header-corporate{
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            color:#fff;
+            padding: 11px 18px;
+            border-radius: 10px;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            margin-bottom:10px;
+            border-right:5px solid #f59e0b;
+            box-shadow:0 8px 18px rgba(15,23,42,.12);
+        }
+        .funding-header-corporate h1{margin:0;font-size:20px;font-weight:900;line-height:1.35;}
+        .funding-header-corporate p{margin:3px 0 0;font-size:12px;color:#cbd5e1;font-weight:600;}
+        .funding-header-tag{font-size:12px;font-weight:900;color:#fbbf24;white-space:nowrap;}
+        .funding-kpi-container{
+            display:grid;
+            grid-template-columns: repeat(4,1fr);
+            gap:10px;
+            margin-bottom:10px;
+        }
+        .funding-kpi-card{
+            background:#fff;
+            border-radius:12px;
+            padding:10px 12px;
+            border-bottom:4px solid #cbd5e1;
+            box-shadow:0 2px 10px rgba(15,23,42,.08);
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+        }
+        .funding-kpi-card.count{border-bottom-color:#3b82f6;}
+        .funding-kpi-card.total{border-bottom-color:#16a34a;}
+        .funding-kpi-card.max{border-bottom-color:#f59e0b;}
+        .funding-kpi-card.branch{border-bottom-color:#8b5cf6;}
+        .funding-kpi-card h3{margin:0;font-size:11px;color:#64748b;font-weight:900;}
+        .funding-kpi-card .val{font-size:22px;font-weight:900;margin-top:2px;color:#0f172a;direction:ltr;text-align:right;}
+        .funding-kpi-card i{font-size:29px;opacity:.22;}
+        .funding-transfer-card{
+            background:#fff;
+            border:1px solid #e2e8f0;
+            border-radius:12px;
+            overflow:hidden;
+            box-shadow:0 2px 10px rgba(15,23,42,.07);
+            flex:1;
+            min-height:0;
+        }
+        .funding-transfer-title{
+            background:linear-gradient(135deg,#1a2a6c,#0f3443);
+            color:#fff;
+            padding:10px 15px;
+            font-weight:900;
+            font-size:15px;
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:10px;
+            border-bottom:3px solid #fdbb2d;
+        }
+        .funding-transfer-title .title-right{display:flex;align-items:center;gap:9px;}
+        .funding-transfer-title i{color:#fdbb2d;font-size:20px;}
+        .funding-transfer-title .title-note{font-size:11px;color:#dbeafe;font-weight:700;}
+        .funding-transfer-table{ width:100%; border-collapse:collapse; table-layout:fixed; margin:0; direction:rtl; font-size:13px; color:#334155; }
+        .funding-transfer-table th{
+            background:#0f172a;
+            color:#fff;
+            padding:8px 5px;
+            font-weight:900;
+            border:1px solid #1e293b;
+            line-height:1.35;
+            text-align:center;
+            vertical-align:middle;
+        }
+        .funding-transfer-table td{
+            padding:8px 5px;
+            border:1px solid #e2e8f0;
+            font-weight:800;
+            line-height:1.45;
+            text-align:center;
+            vertical-align:middle;
+            background:#fff;
+        }
+        .funding-transfer-table tbody tr:nth-child(even) td{background:#f8fafc;}
+        .funding-transfer-table tbody tr:hover td{background:#eef6ff;}
+        .funding-transfer-table .serial{font-weight:900;color:#1e3a8a;background:#eff6ff;}
+        .funding-transfer-table .branch-name{text-align:right;color:#0f172a;font-weight:900;}
+        .funding-transfer-table .amount{
+            direction:ltr;
+            font-family:Arial, sans-serif;
+            font-weight:900;
+            color:#16a34a;
+            background:#f0fdf4;
+        }
+        .funding-transfer-table .date-cell{direction:ltr;color:#475569;font-weight:900;}
+        .funding-transfer-table .equipment-code{
+            direction:ltr;
+            font-family:Arial, sans-serif;
+            font-size:13px;
+            color:#1d4ed8;
+            font-weight:900;
+        }
+        .funding-transfer-table .notes-cell{color:#94a3b8;font-size:11px;}
+        .funding-transfer-table tfoot td{
+            background:linear-gradient(135deg,#facc15,#f59e0b) !important;
+            color:#0f172a;
+            font-size:20px;
+            font-weight:900;
+            padding:11px 6px;
+            border:1px solid #d97706;
+        }
+        .funding-transfer-table tfoot .total-label{text-align:center;font-size:19px;}
+        .funding-transfer-table tfoot .total-value{ direction:ltr; font-family:Arial, sans-serif; text-align:center; letter-spacing:.5px; }
+        .funding-summary-strip{
+            display:grid;
+            grid-template-columns: repeat(3,1fr);
+            gap:10px;
+            margin-top:10px;
+        }
+        .funding-summary-item{
+            background:#fff;
+            border:1px solid #e2e8f0;
+            border-radius:10px;
+            padding:8px 10px;
+            display:flex;
+            align-items:center;
+            gap:8px;
+            color:#334155;
+            font-size:12px;
+            font-weight:800;
+            box-shadow:0 2px 8px rgba(15,23,42,.05);
+        }
+        .funding-summary-item i{color:#f59e0b;font-size:17px;}
+
+    
+
+        /* ===== فهرس محتويات مضغوط داخل صفحة واحدة ===== */
+        .index-page .page-content{
+            padding:6mm 8mm !important;
+            height:100% !important;
+            overflow:hidden !important;
+            box-sizing:border-box !important;
+        }
+        .index-page .index-header{
+            padding:8px 14px !important;
+            margin-bottom:8px !important;
+            border-radius:10px !important;
+        }
+        .index-page .index-header h2{
+            font-size:22px !important;
+            line-height:1.2 !important;
+        }
+        .index-page .index-header i{
+            font-size:30px !important;
+        }
+        .index-page .index-grid{
+            display:grid !important;
+            grid-template-columns:repeat(2, minmax(0, 1fr)) !important;
+            gap:5px 7px !important;
+            flex:0 0 auto !important;
+            align-content:start !important;
+            overflow:hidden !important;
+        }
+        .index-page .index-item{
+            padding:5px 7px !important;
+            border-radius:9px !important;
+            border-right-width:4px !important;
+            gap:7px !important;
+            min-height:39px !important;
+            max-height:46px !important;
+            box-shadow:0 2px 6px rgba(0,0,0,.035) !important;
+        }
+        .index-page .index-icon{
+            font-size:20px !important;
+            width:28px !important;
+            min-width:28px !important;
+        }
+        .index-page .index-content{
+            min-width:0 !important;
+            flex:1 !important;
+        }
+        .index-page .index-content h3{
+            font-size:11.5px !important;
+            line-height:1.25 !important;
+            margin:0 0 1px !important;
+            white-space:nowrap !important;
+            overflow:hidden !important;
+            text-overflow:ellipsis !important;
+        }
+        .index-page .index-content p{
+            font-size:8.5px !important;
+            line-height:1.25 !important;
+            margin:0 !important;
+            white-space:nowrap !important;
+            overflow:hidden !important;
+            text-overflow:ellipsis !important;
+        }
+        .index-page .index-page-num{
+            padding:2px 7px !important;
+            border-radius:18px !important;
+            font-size:10.5px !important;
+            min-width:28px !important;
+            text-align:center !important;
+        }
+        .index-page .page-footer{
+            margin-top:5px !important;
+            padding-top:4px !important;
+            font-size:9px !important;
+        }
+        .index-page .page-number{
+            font-size:10px !important;
+            padding:3px 12px !important;
+        }
+        .index-page div[style*="إجمالي الصفحات"],
+        .index-page div[style*="margin-top: 15px; background: white"]{
+            margin-top:6px !important;
+            padding:6px 10px !important;
+            border-radius:9px !important;
+        }
+        .index-page div[style*="margin-top: 15px; background: white"] p{
+            font-size:11px !important;
+            line-height:1.25 !important;
+        }
+
+
+
+
+        /* ===== تحسين جداول خطة الإصلاح - الخطة الخامسة ===== */
+        .repair-plan-page.enhanced {
+            background: #f8fafc;
+        }
+        .repair-plan-page.enhanced .page-content {
+            padding: 6mm 7mm !important;
+            margin: 0 !important;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-sizing: border-box;
+        }
+        .repair-plan-header {
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            color: #fff;
+            border-radius: 12px;
+            padding: 10px 16px;
+            display: grid;
+            grid-template-columns: 1fr auto auto;
+            align-items: center;
+            gap: 18px;
+            border-right: 6px solid #fdbb2d;
+            box-shadow: 0 8px 18px rgba(15,23,42,.14);
+            margin-bottom: 8px;
+        }
+        .repair-plan-title h1 {
+            margin: 0;
+            font-size: 22px;
+            font-weight: 900;
+            line-height: 1.25;
+        }
+        .repair-plan-title p {
+            margin: 3px 0 0;
+            font-size: 11px;
+            color: #dbeafe;
+            font-weight: 700;
+        }
+        .repair-plan-no,
+        .repair-plan-date {
+            background: rgba(255,255,255,.10);
+            border: 1px solid rgba(255,255,255,.20);
+            border-radius: 10px;
+            padding: 7px 16px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: 900;
+            color: #fdbb2d;
+            white-space: nowrap;
+        }
+        .repair-summary-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+        .repair-summary-card {
+            background: #fff;
+            border-radius: 10px;
+            border: 1px solid #dbe3ee;
+            padding: 8px 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 3px 9px rgba(15,23,42,.06);
+        }
+        .repair-summary-card .label {
+            font-size: 11px;
+            font-weight: 800;
+            color: #64748b;
+        }
+        .repair-summary-card .value {
+            font-size: 19px;
+            font-weight: 900;
+            color: #0f172a;
+            direction: ltr;
+        }
+        .repair-table-wrap {
+            background: #fff;
+            border: 1px solid #cbd5e1;
+            border-radius: 12px;
+            overflow: hidden;
+            flex: 1;
+            min-height: 0;
+            box-shadow: 0 4px 14px rgba(15,23,42,.07);
+        }
+        .repair-table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+            font-size: 8.8px;
+            margin: 0;
+        }
+        .repair-table th {
+            background: #0f172a;
+            color: #fff;
+            border: 1px solid #334155;
+            padding: 5px 3px;
+            font-weight: 900;
+            line-height: 1.25;
+            text-align: center;
+        }
+        .repair-table td {
+            border: 1px solid #cbd5e1;
+            padding: 5px 3px;
+            text-align: center;
+            vertical-align: middle;
+            font-weight: 800;
+            color: #0f172a;
+            line-height: 1.35;
+        }
+        .repair-table tbody tr:nth-child(even) td { background: #f8fafc; }
+        .repair-table .ltr { direction: ltr; font-weight: 900; }
+        .repair-table .brand { font-size: 12px; font-weight: 900; color: #111827; }
+        .repair-table .work-cell { text-align: right; font-size: 8.2px; line-height: 1.35; color: #1e293b; }
+        .repair-table .notes-cell { color: #991b1b; font-weight: 900; }
+        .repair-table .money { direction: ltr; color: #1e3a8a; font-weight: 900; }
+        .repair-total-row td {
+            background: #fff200 !important;
+            color: #000;
+            font-size: 13px;
+            font-weight: 900;
+            border-top: 2px solid #0f172a;
+            padding: 7px 4px;
+        }
+        .repair-plan-page.enhanced .page-footer {
+            margin-top: 7px;
+            padding-top: 5px;
+            border-top: 1px solid #cbd5e1;
+        }
+        @media print {
+            .repair-plan-page.enhanced .page-content {
+                padding: 6mm 7mm !important;
+            }
+        }
+
+        /* ===== صفحات خطة الإصلاح - الخطة الخامسة ===== */
+        .repair-plan-page {
+            background: #ffffff;
+        }
+        .repair-plan-page .page-content {
+            padding: 0 !important;
+            margin: 0 !important;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: stretch;
+            justify-content: center;
+            overflow: hidden;
+            box-sizing: border-box;
+        }
+        .repair-plan-image-wrap {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: stretch;
+            justify-content: center;
+            overflow: hidden;
+            background: #ffffff;
+        }
+        .repair-plan-image-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: fill;
+            display: block;
+        }
+        @media print {
+            .repair-plan-page .page-content,
+            .repair-plan-image-wrap {
+                width: 297mm !important;
+                height: 210mm !important;
+            }
+            .repair-plan-image-wrap img {
+                width: 100% !important;
+                height: 100% !important;
+                object-fit: fill !important;
+            }
+        }
+
+
+        /* ===== صفحة الزيارات الميدانية لمتابعة المعدات ===== */
+        .field-visit-page {
+            background: linear-gradient(135deg, #f8fafc 0%, #edf2f7 100%);
+        }
+        .field-visit-page .page-content { padding: 7mm 9mm; }
+        .visit-header {
+            background: linear-gradient(135deg, #0f3443, #1a2a6c);
+            color: #fff;
+            border-radius: 13px;
+            padding: 12px 18px;
+            display: grid;
+            grid-template-columns: 1fr auto auto;
+            gap: 14px;
+            align-items: center;
+            box-shadow: 0 9px 20px rgba(15, 52, 67, .16);
+            border-right: 6px solid var(--corporate-gold);
+            margin-bottom: 10px;
+        }
+        .visit-header h1 { margin:0; font-size:20px; font-weight:900; color:#fff; }
+        .visit-header p { margin:4px 0 0; font-size:12px; color:#dbeafe; font-weight:700; }
+        .visit-badge {
+            background: #fff;
+            color: #1a2a6c;
+            border: 2px solid #fdbb2d;
+            border-radius: 30px;
+            padding: 8px 16px;
+            font-size: 13px;
+            font-weight: 900;
+            white-space: nowrap;
+        }
+        .visit-date {
+            background: #fdbb2d;
+            color: #111827;
+            border-radius: 10px;
+            padding: 9px 14px;
+            font-size: 16px;
+            font-weight: 900;
+            direction:ltr;
+            white-space: nowrap;
+        }
+        .visit-kpis {
+            display:grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 9px;
+            margin-bottom: 10px;
+        }
+        .visit-kpi {
+            background:#fff;
+            border-radius:12px;
+            padding:10px 12px;
+            border:1px solid #d8e1ea;
+            border-bottom:4px solid #1a2a6c;
+            box-shadow:0 3px 12px rgba(0,0,0,.04);
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+        }
+        .visit-kpi .label {font-size:11px;color:#52677a;font-weight:800;}
+        .visit-kpi .value {font-size:23px;color:#0f3443;font-weight:900;margin-top:2px;}
+        .visit-kpi i {font-size:27px;color:#fdbb2d;opacity:.85;}
+        .visit-grid {
+            display:grid;
+            grid-template-columns: .86fr 1.14fr;
+            gap: 10px;
+            flex:1;
+            min-height:0;
+        }
+        .visit-card {
+            background:#fff;
+            border:1px solid #d8e1ea;
+            border-radius:13px;
+            padding:11px;
+            box-shadow:0 3px 12px rgba(0,0,0,.04);
+            min-height:0;
+        }
+        .visit-card-title {
+            background: linear-gradient(135deg, #1a2a6c, #0f3443);
+            color:#fff;
+            border-radius:9px;
+            padding:8px 11px;
+            margin-bottom:9px;
+            font-size:13px;
+            font-weight:900;
+            display:flex;
+            align-items:center;
+            gap:8px;
+        }
+        .visit-card-title i { color:#fdbb2d; }
+        .visit-committee {
+            width:100%;
+            border-collapse:collapse;
+            margin:0;
+            font-size:11px;
+        }
+        .visit-committee th {
+            background:#eef4fb;
+            color:#1a2a6c;
+            font-weight:900;
+            padding:6px;
+            border:1px solid #d8e1ea;
+        }
+        .visit-committee td {
+            padding:7px 6px;
+            border:1px solid #d8e1ea;
+            font-weight:800;
+            color:#24384a;
+            text-align:center;
+        }
+        .visit-notes {
+            margin-top:9px;
+            display:grid;
+            gap:7px;
+        }
+        .visit-note {
+            background:#f8fafc;
+            border-right:4px solid #fdbb2d;
+            border-radius:9px;
+            padding:8px 10px;
+            font-size:12px;
+            font-weight:800;
+            color:#263b52;
+            line-height:1.65;
+        }
+        .visit-equipment-table {
+            width:100%;
+            border-collapse:collapse;
+            table-layout:fixed;
+            font-size:10px;
+            margin:0;
+        }
+        .visit-equipment-table th {
+            background:#0f172a;
+            color:#fff;
+            padding:6px 4px;
+            border:1px solid #1e293b;
+            font-weight:900;
+        }
+        .visit-equipment-table td {
+            padding:6px 4px;
+            border:1px solid #d8e1ea;
+            font-weight:800;
+            color:#263b52;
+            vertical-align:middle;
+            text-align:center;
+            line-height:1.45;
+        }
+        .visit-equipment-table tr:nth-child(even) td { background:#f8fafc; }
+        .visit-equipment-table .ltr { direction:ltr; font-weight:900; color:#1a2a6c; }
+        .visit-equipment-table .status-red { color:#c0392b; font-weight:900; }
+        .visit-equipment-table .status-orange { color:#d97706; font-weight:900; }
+        .visit-summary-strip {
+            margin-top:10px;
+            display:grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap:8px;
+        }
+        .visit-summary-strip div {
+            background:#fff8e1;
+            border:1px solid #fdbb2d;
+            border-radius:10px;
+            padding:8px;
+            text-align:center;
+            font-weight:900;
+            color:#1a2a6c;
+            font-size:12px;
+        }
+
+        .visit-main-layout {
+            display:grid;
+            grid-template-columns: 1.05fr .95fr;
+            gap: 12px;
+            flex:1;
+            min-height:0;
+        }
+        .visit-hero-card {
+            background: #fff;
+            border: 1px solid #d8e1ea;
+            border-radius: 16px;
+            padding: 14px;
+            box-shadow: 0 8px 18px rgba(15,52,67,.08);
+            position: relative;
+            overflow: hidden;
+        }
+        .visit-hero-card::before {
+            content:"";
+            position:absolute;
+            top:0; right:0;
+            width:100%; height:7px;
+            background: linear-gradient(90deg,#fdbb2d,#1a2a6c,#0f3443);
+        }
+        .visit-info-grid {
+            display:grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 9px;
+            margin-top: 8px;
+        }
+        .visit-info-box {
+            background: #f8fafc;
+            border: 1px solid #d8e1ea;
+            border-right: 5px solid #fdbb2d;
+            border-radius: 11px;
+            padding: 10px 11px;
+            min-height: 55px;
+        }
+        .visit-info-box .small-title {
+            font-size: 11px;
+            color: #52677a;
+            font-weight: 900;
+            margin-bottom: 4px;
+        }
+        .visit-info-box .big-value {
+            font-size: 14px;
+            color: #0f3443;
+            font-weight: 900;
+            line-height: 1.55;
+        }
+        .visit-objective-box {
+            margin-top: 10px;
+            background: linear-gradient(135deg,#fff8e1,#ffffff);
+            border: 1px solid #fdbb2d;
+            border-radius: 13px;
+            padding: 11px 13px;
+            color: #1a2a6c;
+            font-size: 13px;
+            font-weight: 900;
+            line-height: 1.8;
+        }
+        .committee-modern-card {
+            background: #fff;
+            border: 1px solid #d8e1ea;
+            border-radius: 16px;
+            padding: 14px;
+            box-shadow: 0 8px 18px rgba(15,52,67,.08);
+            display:flex;
+            flex-direction:column;
+        }
+        .committee-member {
+            display:grid;
+            grid-template-columns: 48px 1fr;
+            gap: 10px;
+            align-items:center;
+            background:#f8fafc;
+            border:1px solid #d8e1ea;
+            border-radius:13px;
+            padding:10px;
+            margin-bottom:9px;
+        }
+        .committee-avatar {
+            width:48px;height:48px;
+            border-radius:14px;
+            background: linear-gradient(135deg,#1a2a6c,#0f3443);
+            color:#fdbb2d;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:22px;
+        }
+        .committee-name {font-size:13px;font-weight:900;color:#0f3443;margin-bottom:4px;}
+        .committee-role {font-size:11px;font-weight:800;color:#52677a;line-height:1.5;}
+        .visit-equipment-summary-grid {
+            display:grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            flex:1;
+            min-height:0;
+        }
+        .visit-category-card {
+            background:#fff;
+            border:1px solid #d8e1ea;
+            border-radius:15px;
+            padding:12px;
+            box-shadow:0 6px 16px rgba(15,52,67,.07);
+            min-height:0;
+        }
+        .visit-category-title {
+            background:linear-gradient(135deg,#0f172a,#1a2a6c);
+            color:#fff;
+            border-radius:10px;
+            padding:8px 11px;
+            font-size:13px;
+            font-weight:900;
+            margin-bottom:9px;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+        }
+        .visit-category-title span {
+            background:#fdbb2d;
+            color:#111827;
+            padding:3px 10px;
+            border-radius:20px;
+            font-size:11px;
+        }
+        .visit-action-note {
+            margin-top: 11px;
+            background: linear-gradient(135deg,#fff3cd,#ffe08a);
+            border: 3px solid #f59e0b;
+            border-radius: 14px;
+            padding: 13px 16px;
+            color: #5f370e;
+            font-size: 15px;
+            font-weight: 900;
+            line-height: 1.8;
+            display:flex;
+            align-items:center;
+            gap:12px;
+            box-shadow:0 8px 18px rgba(245,158,11,.18);
+        }
+        .visit-action-note i {font-size:28px;color:#b45309;}
+
+    
+
+        /* =========================================================
+           وضع العرض التقديمي Slider - لا يغير محتوى أو تنسيق الصفحات
+           ========================================================= */
+        .presentation-progress-wrap {
+            position: fixed;
+            top: 0;
+            right: 0;
+            left: 0;
+            height: 7px;
+            background: rgba(255,255,255,.20);
+            z-index: 999999;
+            display: none;
+            direction: ltr;
+            box-shadow: 0 2px 10px rgba(0,0,0,.18);
+        }
+        .presentation-progress-bar {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #fdbb2d, #34e89e, #1a2a6c);
+            transition: width .12s linear;
+        }
+        .presentation-toolbar {
+            position: fixed;
+            left: 50%;
+            bottom: 14px;
+            transform: translateX(-50%);
+            z-index: 999999;
+            display: none;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 12px;
+            border-radius: 22px;
+            background: rgba(15, 23, 42, .86);
+            border: 1px solid rgba(255,255,255,.14);
+            box-shadow: 0 12px 35px rgba(0,0,0,.30);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            direction: rtl;
+            font-family: 'Cairo', sans-serif;
+        }
+        .presentation-toolbar button,
+        .presentation-toolbar select {
+            border: 0;
+            outline: none;
+            font-family: 'Cairo', sans-serif;
+            font-weight: 900;
+        }
+        .presentation-toolbar button {
+            min-width: 44px;
+            height: 40px;
+            padding: 0 12px;
+            border-radius: 14px;
+            color: #fff;
+            background: rgba(255,255,255,.12);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            transition: transform .18s ease, background .18s ease, box-shadow .18s ease;
+            white-space: nowrap;
+        }
+        .presentation-toolbar button:hover {
+            background: rgba(253,187,45,.95);
+            color: #101827;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(253,187,45,.25);
+        }
+        .presentation-toolbar .play-btn {
+            background: linear-gradient(135deg, #16a34a, #22c55e);
+            color: #fff;
+        }
+        .presentation-toolbar .pause-btn {
+            background: linear-gradient(135deg, #e74c3c, #f97316);
+            color: #fff;
+        }
+        .presentation-toolbar .slide-counter {
+            min-width: 92px;
+            height: 40px;
+            padding: 0 12px;
+            border-radius: 14px;
+            color: #fdbb2d;
+            background: rgba(255,255,255,.10);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 900;
+            direction: ltr;
+        }
+        .presentation-toolbar select {
+            height: 40px;
+            border-radius: 14px;
+            padding: 0 10px;
+            color: #fff;
+            background: rgba(255,255,255,.12);
+            cursor: pointer;
+        }
+        .presentation-start-tip {
+            position: fixed;
+            top: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 999999;
+            display: none;
+            background: rgba(15,23,42,.88);
+            color: #fff;
+            padding: 9px 14px;
+            border-radius: 999px;
+            font-family: 'Cairo', sans-serif;
+            font-size: 12px;
+            font-weight: 800;
+            border: 1px solid rgba(255,255,255,.16);
+            box-shadow: 0 8px 24px rgba(0,0,0,.22);
+            pointer-events: none;
+        }
+
+        body.slider-mode {
+            padding: 0 !important;
+            margin: 0 !important;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden !important;
+            background:
+                radial-gradient(circle at top left, rgba(52,232,158,.18), transparent 32%),
+                radial-gradient(circle at bottom right, rgba(253,187,45,.16), transparent 34%),
+                linear-gradient(135deg, #08111f, #111827 55%, #0f3443) !important;
+        }
+        body.slider-mode::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            background-image:
+                linear-gradient(rgba(255,255,255,.045) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,.045) 1px, transparent 1px);
+            background-size: 34px 34px;
+            pointer-events: none;
+        }
+        body.slider-mode .presentation-progress-wrap,
+        body.slider-mode .presentation-toolbar,
+        body.slider-mode .presentation-start-tip {
+            display: flex;
+        }
+        body.slider-mode .presentation-progress-wrap { display: block; }
+        body.slider-mode .page,
+        body.slider-mode .cover-page-new {
+            display: none !important;
+            position: fixed !important;
+            top: 50% !important;
+            left: 50% !important;
+            right: auto !important;
+            bottom: auto !important;
+            margin: 0 !important;
+            transform: translate(-50%, -50%) scale(var(--slide-scale, 1)) !important;
+            transform-origin: center center !important;
+            z-index: 10 !important;
+            box-shadow: 0 24px 70px rgba(0,0,0,.45) !important;
+            border-radius: 14px !important;
+            opacity: 0;
+            animation: slideEnter .42s ease both;
+        }
+        body.slider-mode .page.active-slide,
+        body.slider-mode .cover-page-new.active-slide {
+            display: flex !important;
+            opacity: 1;
+        }
+        body.slider-mode .page-footer {
+            pointer-events: none;
+        }
+        body.slider-mode.hide-controls .presentation-toolbar {
+            opacity: 0;
+            pointer-events: none;
+            transform: translateX(-50%) translateY(16px);
+            transition: opacity .25s ease, transform .25s ease;
+        }
+
+        /* تحسين احترافي لمساحة العرض بدون تعديل محتوى الصفحات */
+        body.slider-mode .page,
+        body.slider-mode .cover-page-new {
+            max-width: none !important;
+            max-height: none !important;
+            outline: 1px solid rgba(255,255,255,.16);
+        }
+        body.slider-mode .page.active-slide,
+        body.slider-mode .cover-page-new.active-slide {
+            filter: drop-shadow(0 28px 55px rgba(0,0,0,.36));
+        }
+        .presentation-toolbar {
+            bottom: 10px;
+            padding: 9px 11px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, rgba(15,23,42,.92), rgba(15,52,67,.88));
+        }
+        .presentation-toolbar::before {
+            content: "";
+            position: absolute;
+            inset: -1px;
+            border-radius: inherit;
+            padding: 1px;
+            background: linear-gradient(90deg, rgba(253,187,45,.75), rgba(52,232,158,.45), rgba(255,255,255,.12));
+            -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+        }
+        .presentation-progress-wrap {
+            height: 9px;
+            background: rgba(15,23,42,.48);
+        }
+        .presentation-progress-bar {
+            box-shadow: 0 0 18px rgba(253,187,45,.50);
+        }
+        @keyframes slideEnter {
+            from { opacity: 0; transform: translate(-50%, -50%) scale(calc(var(--slide-scale, 1) * .985)) translateY(10px) !important; }
+            to   { opacity: 1; transform: translate(-50%, -50%) scale(var(--slide-scale, 1)) translateY(0) !important; }
+        }
+        @media (max-width: 768px) {
+            .presentation-toolbar {
+                right: 6px;
+                left: 6px;
+                bottom: 6px;
+                transform: none;
+                justify-content: center;
+                flex-wrap: wrap;
+                border-radius: 16px;
+                padding: 6px;
+            }
+            .presentation-toolbar button {
+                min-width: 40px;
+                height: 38px;
+                padding: 0 10px;
+                font-size: 12px;
+            }
+            .presentation-toolbar .btn-text { display: none; }
+            .presentation-toolbar .slide-counter { min-width: 78px; height: 38px; font-size: 12px; }
+            .presentation-toolbar select { height: 38px; font-size: 12px; }
+            body.slider-mode .page,
+            body.slider-mode .cover-page-new { border-radius: 8px !important; }
+        }
+        @media print {
+            .presentation-progress-wrap,
+            .presentation-toolbar,
+            .presentation-start-tip { display: none !important; }
+            body.slider-mode {
+                height: auto !important;
+                overflow: visible !important;
+                background: white !important;
+            }
+            body.slider-mode::before { display: none !important; }
+            body.slider-mode .page,
+            body.slider-mode .cover-page-new {
+                display: flex !important;
+                position: relative !important;
+                top: auto !important;
+                left: auto !important;
+                transform: none !important;
+                margin: 0 auto !important;
+                box-shadow: none !important;
+                border-radius: 0 !important;
+                opacity: 1 !important;
+                animation: none !important;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="presentation-progress-wrap" aria-hidden="true"><div class="presentation-progress-bar" id="presentationProgressBar"></div></div>
+<div class="presentation-start-tip" id="presentationStartTip">اضغط F11 أو زر التشغيل للعرض بملء الشاشة</div>
+<div class="presentation-toolbar" id="presentationToolbar" role="toolbar" aria-label="أدوات التحكم في العرض">
+    <button type="button" id="firstSlideBtn" title="أول شريحة"><i class="fas fa-angles-right"></i></button>
+    <button type="button" id="prevSlideBtn" title="الشريحة السابقة"><i class="fas fa-chevron-right"></i><span class="btn-text">السابق</span></button>
+    <button type="button" id="playPauseBtn" class="play-btn" title="تشغيل / إيقاف"><i class="fas fa-play"></i><span class="btn-text">تشغيل</span></button>
+    <button type="button" id="nextSlideBtn" title="الشريحة التالية"><span class="btn-text">التالي</span><i class="fas fa-chevron-left"></i></button>
+    <button type="button" id="lastSlideBtn" title="آخر شريحة"><i class="fas fa-angles-left"></i></button>
+    <span class="slide-counter" id="slideCounter">1 / 1</span>
+    <select id="slideDuration" title="مدة كل شريحة">
+        <option value="5000">5 ثواني</option>
+        <option value="8000">8 ثواني</option>
+        <option value="10000" selected>10 ثواني</option>
+        <option value="15000">15 ثانية</option>
+        <option value="20000">20 ثانية</option>
+    </select>
+    <button type="button" id="fullscreenBtn" title="ملء الشاشة"><i class="fas fa-expand"></i></button>
+</div>
+
+<!-- ==================== الصفحة 1: Cover Image ==================== -->
+<div class="page" style="background:#ffffff;">
+<div class="page-content" style="
+        padding:0;
+        margin:25px;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        overflow:hidden;
+        height:100%;
+    ">
+<img alt="بيان المعدات" onerror="this.onerror=null;
+             this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%221200%22 height=%22800%22 viewBox=%220 0 1200 800%22%3E%3Crect width=%221200%22 height=%22800%22 fill=%22%23f5f5f5%22/%3E%3Ctext x=%22600%22 y=%22400%22 font-size=%2240%22 text-anchor=%22middle%22 fill=%22%23999%22 font-family=%22Cairo%22%3Eforce.png غير موجود%3C/text%3E%3C/svg%3E';" src="./img/cover1.png" style="
+                width:100%;
+                height:100%;
+                object-fit:fill;
+                display:block;
+             "/>
+</div>
+</div>
+
+<!-- الصفحة 2: الفهرس المعدل حسب المحتويات الفعلية -->
+<div class="page index-page">
+<div class="page-content">
+<div class="index-header">
+<h2>فهرس المحتويات</h2>
+<i class="fas fa-list-ul" style="font-size: 40px; opacity: 0.8;"></i>
+</div>
+<div class="index-grid">
+<div class="index-item">
+<div class="index-icon"><i class="fas fa-chart-pie"></i></div>
+<div class="index-content">
+<h3>بيان المعدات</h3>
+<p>بيان عددي بالمعدات العاملة والعاطلة</p>
+</div>
+<div class="index-page-num">3</div>
+</div>
+
+<div class="index-item">
+<div class="index-icon"><i class="fas fa-compress-arrows-alt"></i></div>
+<div class="index-content">
+<h3>تحليل فرز كمبروسرات الهواء</h3>
+<p>لوحة إحصائية وجداول تفصيلية للعاملة والمعطلة والتكهين</p>
+</div>
+<div class="index-page-num">4-8</div>
+</div>
+
+<div class="index-item">
+<div class="index-icon"><i class="fas fa-money-bill-transfer"></i></div>
+<div class="index-content">
+<h3>بيان التمويلات المحولة للإصلاحات</h3>
+<p>التمويلات المحولة من إدارات وفروع الشركة لزوم الإصلاحات</p>
+</div>
+<div class="index-page-num">9</div>
+</div>
+
+<div class="index-item">
+<div class="index-icon"><i class="fas fa-chart-simple"></i></div>
+<div class="index-content">
+<h3>مقارنة الأداء المالي للقطاعات</h3>
+<p>تحليل الإيرادات والربحية للفترات المالية والقطاعات</p>
+</div>
+<div class="index-page-num">10</div>
+</div>
+
+<div class="index-item">
+<div class="index-icon"><i class="fas fa-hand-holding-usd"></i></div>
+<div class="index-content">
+<h3>إيرادات الربع الأول 2025</h3>
+<p>من 01-07-2025 حتى 30-09-2025</p>
+</div>
+<div class="index-page-num">11</div>
+</div>
+
+<div class="index-item">
+<div class="index-icon"><i class="fas fa-file-invoice-dollar"></i></div>
+<div class="index-content">
+<h3>إيرادات الربع الثاني 2025</h3>
+<p>من 01-10-2025 حتى 31-12-2025</p>
+</div>
+<div class="index-page-num">12</div>
+</div>
+
+<div class="index-item">
+<div class="index-icon"><i class="fas fa-calendar-days"></i></div>
+<div class="index-content">
+<h3>إيرادات الربع الثالث 2026</h3>
+<p>من 01-01-2026 حتى 31-03-2026 بعد دمج إدارات أخرى</p>
+</div>
+<div class="index-page-num">13</div>
+</div>
+
+<div class="index-item">
+<div class="index-icon"><i class="fas fa-screwdriver-wrench"></i></div>
+<div class="index-content">
+<h3>خطة إصلاح الكمبروسرات</h3>
+<p>بيان تكلفة الإصلاح لوحدة المعدات الثابتة - الخطة الخامسة</p>
+</div>
+<div class="index-page-num">14</div>
+</div>
+
+<div class="index-item">
+<div class="index-icon"><i class="fas fa-bolt"></i></div>
+<div class="index-content">
+<h3>خطة إصلاح المولدات</h3>
+<p>بيان تكلفة الإصلاح لوحدة المعدات الثابتة - الخطة الخامسة</p>
+</div>
+<div class="index-page-num">15</div>
+</div>
+
+<div class="index-item">
+<div class="index-icon"><i class="fas fa-route"></i></div>
+<div class="index-content">
+<h3>الزيارات الميدانية لمتابعة المعدات</h3>
+<p>تقرير زيارات مخازن الصالحية وفرع مدينة نصر وموقف المعدات</p>
+</div>
+<div class="index-page-num">16-19</div>
+</div>
+
+<div class="index-item">
+<div class="index-icon"><i class="fas fa-bolt"></i></div>
+<div class="index-content">
+<h3>رفع كفاءة مولد 60 ك.ف.أ</h3>
+<p>إدارة ترسانة المعصرة - قبل وبعد الإصلاح</p>
+</div>
+<div class="index-page-num">20-23</div>
+</div>
+
+<div class="index-item">
+<div class="index-icon"><i class="fas fa-flask"></i></div>
+<div class="index-content">
+<h3>قراءات الاختبارات والتحميل</h3>
+<p>بيان اختبارات التشغيل والتحميل بعد الإصلاح</p>
+</div>
+<div class="index-page-num">24</div>
+</div>
+
+<div class="index-item">
+<div class="index-icon"><i class="fas fa-flag-checkered"></i></div>
+<div class="index-content">
+<h3>خاتمة التقرير</h3>
+<p>الصورة الختامية للتقرير</p>
+</div>
+<div class="index-page-num">25</div>
+</div>
+</div>
+<div style="margin-top: 15px; background: white; border-radius: 15px; padding: 12px;">
+<p style="font-size: 14px; margin: 0;"><i class="fas fa-file-pdf" style="color: #d32f2f;"></i> إجمالي الصفحات: 25 صفحة (تشمل الغلاف والفهرس)</p>
+</div>
+<div class="page-footer">
+<span></span>
+<span class="page-number"><i class="fas fa-list"></i> صفحة <span class="current-page">2</span> من <span class="total-pages">25</span></span>
+</div>
+</div>
+</div>
+
+<!-- ==================== باقي الصفحات (3 إلى 25) - بدون أي تغيير في التنسيق أو المحتوى ==================== -->
+<!-- الصفحة 3: بيان المعدات -->
+<div class="page" style="background:#ffffff;">
+<div class="page-content" style="
+        padding:0;
+        margin:25px;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        overflow:hidden;
+        height:100%;
+    ">
+<img alt="بيان المعدات" onerror="this.onerror=null;
+             this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%221200%22 height=%22800%22 viewBox=%220 0 1200 800%22%3E%3Crect width=%221200%22 height=%22800%22 fill=%22%23f5f5f5%22/%3E%3Ctext x=%22600%22 y=%22400%22 font-size=%2240%22 text-anchor=%22middle%22 fill=%22%23999%22 font-family=%22Cairo%22%3Eforce.png غير موجود%3C/text%3E%3C/svg%3E';" src="./img/force.png" style="
+                width:100%;
+                height:100%;
+                object-fit:fill;
+                display:block;
+             "/>
+</div>
+<div class="page-footer">
+<span></span>
+<span class="page-number"><i class="fas fa-image"></i> صفحة <span class="current-page">3</span> من <span class="total-pages">25</span></span>
+</div> 
+</div>
+<!-- الصفحة 4: لوحة التحليل الإحصائي للكمبروسرات -->
+<div class="page compressor-report-page">
+<div class="page-content">
+<div class="compressor-header-corporate">
+<div>
+<h1><i class="fas fa-chart-pie"></i> لوحة التحليل الإحصائي  للجاهزية والتوزيع الجغرافي</h1>
+<p>نسب التشغيل والأعطال ومواقع التواجد الفعلي للكمبروسرات </p>
+</div>
+<div class="compressor-tag">ورش العمرات - شبرا</div>
+</div>
+<div class="compressor-kpi-container">
+<div class="compressor-kpi-card total"><div><h3>إجمالي الحصر الكلي</h3><div class="val">61</div></div><i class="fas fa-layer-group" style="color:#3b82f6;"></i></div>
+<div class="compressor-kpi-card active"><div><h3>كمبروسرات عاملة</h3><div class="val" style="color:#16a34a;">33</div></div><i class="fas fa-play-circle" style="color:#16a34a;"></i></div>
+<div class="compressor-kpi-card broken"><div><h3>كمبروسرات معطلة</h3><div class="val" style="color:#ea580c;">17</div></div><i class="fas fa-stop-circle" style="color:#ea580c;"></i></div>
+<div class="compressor-kpi-card scrap"><div><h3>وحدات تحت التكهين</h3><div class="val" style="color:#dc2626;">11</div></div><i class="fas fa-trash-alt" style="color:#dc2626;"></i></div>
+</div>
+<div class="compressor-dashboard-grid">
+<div class="compressor-chart-box"><h4><i class="fas fa-map-marked-alt"></i>رسم بيانى بالاعداد لكل ادارة</h4><div class="compressor-chart-holder"><canvas id="compressorLocationAnalysisChart"></canvas></div></div>
+<div class="compressor-chart-box"><h4><i class="fas fa-chart-pie"></i> نسبة الموقف الفني التشغيلي الإجمالي للمعدات</h4><div class="compressor-chart-holder"><canvas id="compressorStatusPieChart"></canvas></div></div>
+</div>
+<div class="page-footer"><span>بيان الفرزة المعتمد رقمياً كودياً</span><span class="compressor-page-number-box">صفحة <span class="current">4</span> من 25</span></div>
+</div>
+</div>
+<!-- الصفحة 5: الكمبروسرات العاملة - جزء 1 -->
+<div class="page compressor-report-page">
+<div class="page-content">
+<div class="compressor-header-corporate"><div><h1><i class="fas fa-check-double"></i> أولاً: المعدات الجاهزة والعاملة </h1><p></p></div><div class="compressor-tag">المجموعة الأولى</div></div>
+<div class="compressor-section-title active"><i class="fas fa-circle-check"></i> الكمبروسرات العاملة في إدارات وأفرع الشركة - العدد الإجمالي: 33 معدة</div>
+<div class="compressor-table-box"><table><thead><tr><th style="width:34px;">م</th><th style="width:86px;">كود المعدة ↑</th><th style="width:100px;">ماركة المعدة</th><th style="width:66px;">القدرة</th><th>الجهة المتعاقد معها</th><th>مكان التواجد الفعلي</th><th style="width:54px;">سنة الصنع</th><th style="width:64px;">الحالة</th><th>ملاحظات التشغيل</th></tr></thead><tbody><tr><td>1</td><td class="code active-code">16/01/169</td><td>ATLAS COPCO</td><td>10 BAR</td><td>شرق و وسط الدلتا</td><td>مشروع غزل المحلة</td><td>1997</td><td><span class="compressor-badge active">تعمل</span></td><td class="note-cell"></td></tr>
+<tr><td>2</td><td class="code active-code">16/01/192</td><td>ATLAS COPCO</td><td>10 BAR</td><td>فرع الاسكندرية</td><td>ميناء ابو قير</td><td>1998</td><td><span class="compressor-badge active">تعمل</span></td><td class="note-cell"></td></tr>
+<tr><td>3</td><td class="code active-code">16/01/201</td><td>ATLAS COPCO</td><td>7 BAR</td><td>ادارة الكبارى</td><td>مشروعات ادفو</td><td>1999</td><td><span class="compressor-badge active">تعمل</span></td><td class="note-cell"></td></tr>
+<tr><td>4</td><td class="code active-code">16/01/211</td><td>INGERSOLL RAND</td><td>6 BAR</td><td>فرع سيناء</td><td>ورش ديوتس</td><td>2000</td><td><span class="compressor-badge active">تعمل</span></td><td class="note-cell"></td></tr>
+<tr><td>5</td><td class="code active-code">16/01/765</td><td>COMPAIR</td><td>10 BAR</td><td>ادارة الانفاق</td><td>ادارة الانفاق</td><td>1992</td><td><span class="compressor-badge active">تعمل</span></td><td class="note-cell"></td></tr>
+<tr><td>6</td><td class="code active-code">16/01/774</td><td>INGERSOLL RAND</td><td>10 BAR</td><td>ادارة الكبارى</td><td>مراغة</td><td>1993</td><td><span class="compressor-badge active">تعمل</span></td><td class="note-cell"></td></tr>
+<tr><td>7</td><td class="code active-code">16/01/786</td><td>INGERSOLL RAND</td><td>10 BAR</td><td>فرع مدينة نصر</td><td>فرع مدينة نصر</td><td>1994</td><td><span class="compressor-badge active">تعمل</span></td><td class="note-cell"></td></tr>
+<tr><td>8</td><td class="code active-code">16/01/790</td><td>ATLAS COPCO</td><td>21 BAR</td><td>فرع اسيوط</td><td>فرع اسيوط</td><td>1997</td><td><span class="compressor-badge active">تعمل</span></td><td class="note-cell"></td></tr>
+<tr><td>9</td><td class="code active-code">16/01/834</td><td>SULLAIR</td><td>7 BAR</td><td>ادارة الكبارى</td><td>القطار السريع</td><td>2003</td><td><span class="compressor-badge active">تعمل</span></td><td class="note-cell"></td></tr>
+<tr><td>10</td><td class="code active-code">16/01/847</td><td>ATLAS COPCO</td><td>7 BAR</td><td>فرع مدينة نصر</td><td>القطار السريع</td><td>2009</td><td><span class="compressor-badge active">تعمل</span></td><td class="note-cell"></td></tr>
+<tr><td>11</td><td class="code active-code">16/01/851</td><td>ATLAS COPCO</td><td>11 BAR</td><td>صيانة القصور</td><td>كلية الهندسة الاسكندرية</td><td>2009</td><td><span class="compressor-badge active">تعمل</span></td><td class="note-cell"></td></tr>
+<tr><td>12</td><td class="code active-code">16/01/854</td><td>INGERSOLL RAND</td><td>10 BAR</td><td>فرع القاهرة</td><td>القطار السريع</td><td>2008</td><td><span class="compressor-badge active">تعمل</span></td><td class="note-cell"></td></tr>
+<tr><td>13</td><td class="code active-code">16/01/855</td><td>INGERSOLL RAND</td><td>10 BAR</td><td>صيانة القصور</td><td>صيانة القصور</td><td>2008</td><td><span class="compressor-badge active">تعمل</span></td><td class="note-cell"></td></tr>
+<tr><td>14</td><td class="code active-code">16/01/865</td><td>COMPAIR</td><td>10 BAR</td><td>فرع الاسكندرية</td><td>مشروع العالمين</td><td>2009</td><td><span class="compressor-badge active">تعمل</span></td><td class="note-cell"></td></tr>
+<tr><td>15</td><td class="code active-code">16/01/871</td><td>COMPAIR</td><td>11 BAR</td><td>فرع شمال الدلتا</td><td>مشروع تطوير لسان راس البر</td><td>2009</td><td><span class="compressor-badge active">تعمل</span></td><td class="note-cell"></td></tr>
+<tr><td>16</td><td class="code active-code">16/01/883</td><td>ATLAS COPCO</td><td>11 BAR</td><td>فرع شمال الدلتا</td><td>مشروعات دمياط</td><td>2010</td><td><span class="compressor-badge active">تعمل</span></td><td class="note-cell"></td></tr>
+<tr><td>17</td><td class="code active-code">16/01/884</td><td>ATLAS COPCO</td><td>10 BAR</td><td>فرع سيناء</td><td>قناه السويس</td><td>2010</td><td><span class="compressor-badge active">تعمل</span></td><td class="note-cell"></td></tr></tbody></table></div>
+<div class="page-footer"><span>ورش العمرات - وحدة المعدات الثابتة</span><span class="compressor-page-number-box">صفحة <span class="current">5</span> من 25</span></div>
+</div>
+</div>
+<!-- الصفحة 6: الكمبروسرات العاملة - جزء 2 -->
+<div class="page compressor-report-page">
+<div class="page-content">
+<div class="compressor-header-corporate"><div><h1><i class="fas fa-check-double"></i> أولاً: المعدات الجاهزة والعاملة </h1><p></p></div><div class="compressor-tag">المجموعة الأولى</div></div>
+<div class="compressor-section-title active"><i class="fas fa-circle-check"></i> الكمبروسرات العاملة في إدارات وأفرع الشركة - العدد الإجمالي: 33 معدة</div>
+<div class="compressor-table-box"><table><thead><tr><th style="width:34px;">م</th><th style="width:86px;">كود المعدة ↑</th><th style="width:100px;">ماركة المعدة</th><th style="width:66px;">القدرة</th><th>الجهة المتعاقد معها</th><th>مكان التواجد الفعلي</th><th style="width:54px;">سنة الصنع</th><th style="width:64px;">الحالة</th><th>ملاحظات التشغيل</th></tr></thead><tbody><tr><td>18</td><td class="code active-code">16/01/885</td><td>ATLAS COPCO</td><td>7 BAR</td><td>تاجير المعدات</td><td>قناة السويس</td><td>2008</td><td><span class="compressor-badge active">تعمل</span></td><td class="note-cell"></td></tr>
+<tr><td>19</td><td class="code active-code">16/01/891</td><td>ATLAS COPCO</td><td>11 BAR</td><td>فرع جنوب الوادى</td><td>مشروعات ادفو</td><td>2011</td><td><span class="compressor-badge active">تعمل</span></td><td class="note-cell"></td></tr>
+<tr><td>20</td><td class="code active-code">16/01/892</td><td>ATLAS COPCO</td><td>10 BAR</td><td>صيانة القصور</td><td>كلية الهندسة الاسكندرية</td><td>2011</td><td><span class="compressor-badge active">تعمل</span></td><td class="note-cell"></td></tr>
+<tr><td>21</td><td class="code active-code">16/01/897</td><td>ATLAS COPCO</td><td>7 BAR</td><td>فرع القناه</td><td>مشروعات السويس</td><td>2002</td><td><span class="compressor-badge active">تعمل</span></td><td class="note-cell"></td></tr>
+<tr><td>22</td><td class="code active-code">16/01/899</td><td>ATLAS COPCO</td><td>7 BAR</td><td>ادارة الكبارى</td><td>وحدة الاصلاح</td><td>2015</td><td><span class="compressor-badge active">تعمل</span></td><td class="note-cell"></td></tr>
+<tr><td>23</td><td class="code active-code">16/01/903</td><td>COMPAIR</td><td>10 BAR</td><td>فرع مدينة نصر</td><td>محكمة النقض</td><td>2018</td><td><span class="compressor-badge active">تعمل</span></td><td class="note-cell"></td></tr>
+<tr><td>24</td><td class="code active-code">16/01/904</td><td>COMPAIR</td><td>21 BAR</td><td>ادارة الكبارى</td><td>الضبعة</td><td>2019</td><td><span class="compressor-badge active">تعمل</span></td><td class="note-cell"></td></tr>
+<tr><td>25</td><td class="code active-code">16/01/905</td><td>COMPAIR</td><td>10 BAR</td><td>فرع حلوان</td><td>بشتيل</td><td>2019</td><td><span class="compressor-badge active">تعمل</span></td><td class="note-cell"></td></tr>
+<tr><td>26</td><td class="code active-code">16/01/906</td><td>COMPAIR</td><td>10 BAR</td><td>صيانة القصور</td><td>صيانة القصور</td><td>2019</td><td><span class="compressor-badge active">تعمل</span></td><td class="note-cell"></td></tr>
+<tr><td>27</td><td class="code active-code">16/01/908</td><td>DOOSAN</td><td>7.5 BAR</td><td>فرع الاسكندرية</td><td>الضبعة</td><td>2019</td><td><span class="compressor-badge active">تعمل</span></td><td class="note-cell"></td></tr>
+<tr><td>28</td><td class="code active-code">16/01/909</td><td>COMPAIR</td><td>7.5 BAR</td><td>فرع الاسكندرية</td><td>الضبعة</td><td>2020</td><td><span class="compressor-badge active">تعمل</span></td><td class="note-cell"></td></tr>
+<tr><td>29</td><td class="code active-code">16/01/919</td><td>COMPAIR</td><td>7 BAR</td><td>فرع الاسكندرية</td><td>الضبعة</td><td>2021</td><td><span class="compressor-badge active">تعمل</span></td><td class="note-cell"></td></tr>
+<tr><td>30</td><td class="code active-code">16/01/923</td><td>COMPAIR</td><td>7 BAR</td><td>ادارة الكبارى</td><td>ورش الكبارى</td><td>2021</td><td><span class="compressor-badge active">تعمل</span></td><td class="note-cell"></td></tr>
+<tr><td>31</td><td class="code active-code">16/01/924</td><td>COMPAIR</td><td>7 BAR</td><td>ادارة الكبارى</td><td>وحدة الاصلاح</td><td>2021</td><td><span class="compressor-badge active">تعمل</span></td><td class="note-cell"></td></tr>
+<tr><td>32</td><td class="code active-code">16/01/925</td><td>ATLAS COPCO</td><td>7 BAR</td><td>الخط الرابع</td><td>الخط الرابع</td><td>2021</td><td><span class="compressor-badge active">تعمل</span></td><td class="note-cell"></td></tr>
+<tr><td>33</td><td class="code active-code">16/01/926</td><td>ATLAS COPCO</td><td>7 BAR</td><td>الخط الرابع</td><td>الخط الرابع</td><td>2021</td><td><span class="compressor-badge active">تعمل</span></td><td class="note-cell"></td></tr></tbody></table></div>
+<div class="page-footer"><span>ورش العمرات - وحدة المعدات الثابتة</span><span class="compressor-page-number-box">صفحة <span class="current">6</span> من 25</span></div>
+</div>
+</div>
+<!-- الصفحة 7: الكمبروسرات المعطلة وتحت الإصلاح -->
+<div class="page compressor-report-page">
+<div class="page-content">
+<div class="compressor-header-corporate"><div><h1><i class="fas fa-tools"></i> ثانياً: المعدات المعطلة وتحت الإصلاح</h1><p>سجل تفصيلي يوضح حالة العطل وتاريخه</p></div><div class="compressor-tag">المجموعة الثانية</div></div>
+<div class="compressor-section-title broken"><i class="fas fa-triangle-exclamation"></i> الوحدات المعطلة - ورش العمرات + الأفرع - العدد الإجمالي: 17 معدة</div>
+<div class="compressor-table-box"><table><thead><tr><th style="width:34px;">م</th><th style="width:82px;">كود المعدة ↑</th><th style="width:92px;">ماركة المعدة</th><th style="width:62px;">القدرة</th><th style="width:120px;">الجهة المتعاقد معها</th><th style="width:105px;">مكان التواجد الفعلي</th><th style="width:52px;">سنة الصنع</th><th>حالة المعدة - نوع العطل الفني التفصيلي</th><th style="width:80px;">تاريخ العطل</th></tr></thead><tbody><tr><td>1</td><td class="code broken-code">16/01/47</td><td>ATLAS COPCO</td><td>7 BAR</td><td>ترسانة المعصرة</td><td>ترسانة المعصرة</td><td>1980</td><td class="fault-cell">معطل ( تجديد شامل )</td><td>ـــــــــــ</td></tr>
+<tr><td>2</td><td class="code broken-code">16/01/109</td><td>ATLAS COPCO</td><td>7 BAR</td><td>ادارة الانشاءات البحرية</td><td>المخازن الرئيسية بالعاشر</td><td>1982</td><td class="fault-cell">معطل ( عمرة محرك + عمرة وحدة )</td><td>ـــــــــــ</td></tr>
+<tr><td>3</td><td class="code broken-code">16/01/164</td><td>ATLAS COPCO</td><td>7 BAR</td><td>ادارة الكبارى</td><td>موقع الكباري</td><td>1997</td><td class="fault-cell">معطل ( عمرة محرك )</td><td>ـــــــــــ</td></tr>
+<tr><td>4</td><td class="code broken-code">16/01/180</td><td>ATLAS COPCO</td><td>8 BAR</td><td>المنشاءات المتميزة</td><td>مخازن الكيلو 35</td><td>2005</td><td class="fault-cell">معطل ( عمرة محرك )</td><td>ـــــــــــ</td></tr>
+<tr><td>5</td><td class="code broken-code">16/01/772</td><td>INGERSOLL RAND</td><td>22 BAR</td><td>فرع جنوب الوادى</td><td>فرع جنوب الوادى</td><td>1993</td><td class="fault-cell">معطل ( تجديد شامل )</td><td>ـــــــــــ</td></tr>
+<tr><td>6</td><td class="code broken-code">16/01/791</td><td>ATLAS COPCO</td><td>10 BAR</td><td>المشروعات طموه</td><td>ورش العمرات</td><td>1998</td><td class="fault-cell">معطل الميكانيكا والكهرباء</td><td>2024-12-07</td></tr>
+<tr><td>7</td><td class="code broken-code">16/01/800</td><td>ATLAS COPCO</td><td>10 BAR</td><td>شرق و وسط الدلتا</td><td>ورش العمرات</td><td>2000</td><td class="fault-cell">معطل ( عمرة محرك )</td><td>2024-08-20</td></tr>
+<tr><td>8</td><td class="code broken-code">16/01/816</td><td>SULLAIR</td><td>7 BAR</td><td>تاجير المعدات</td><td>ورش العمرات</td><td>2005</td><td class="fault-cell">معطل ( عمرة محرك )</td><td>2026-03-09</td></tr>
+<tr><td>9</td><td class="code broken-code">16/01/817</td><td>SULLAIR</td><td>7 BAR</td><td>تاجير المعدات</td><td>ورش العمرات</td><td>2005</td><td class="fault-cell">معطل ( عمرة محرك )</td><td>2026-05-07</td></tr>
+<tr><td>10</td><td class="code broken-code">16/01/821</td><td>COMPAIR</td><td>10 BAR</td><td>ادارة الانشاءات البحرية</td><td>ورش العمرات</td><td>2005</td><td class="fault-cell">معطل ( عمرة محرك )</td><td>2024-11-06</td></tr>
+<tr><td>11</td><td class="code broken-code">16/01/857</td><td>INGERSOLL RAND</td><td>8 BAR</td><td>ادارة الانشاءات البحرية</td><td>ورش العمرات</td><td>2009</td><td class="fault-cell">معطل ( خلط ماء بالزيت &amp; تلف غرفة الرشاشات )</td><td>2025-12-18</td></tr>
+<tr><td>12</td><td class="code broken-code">16/01/868</td><td>INGERSOLL RAND</td><td>25 BAR</td><td>ادارة الانشاءات البحرية</td><td>وجه قبلى</td><td>2009</td><td class="fault-cell">معطل ( وحدة كبس هواء )</td><td>ـــــــــــ</td></tr>
+<tr><td>13</td><td class="code broken-code">16/01/873</td><td>ATLAS COPCO</td><td>10 BAR</td><td>فرع حلوان</td><td>ورش فرع حلوان</td><td>2010</td><td class="fault-cell">معطل ( عمرة محرك )</td><td>ـــــــــــ</td></tr>
+<tr><td>14</td><td class="code broken-code">16/01/879</td><td>ATLAS COPCO</td><td>7 BAR</td><td>المشروعات طموه</td><td>ورش العمرات</td><td>2009</td><td class="fault-cell">معطل ( تلف وحدة ضغط الهواء + تلف فلتر فاصل الزيت + تلف خزان الزيت + تلف Key Start الخاص بالتشغيل + تلف فى دفيرة الكهرباء )</td><td>2026-04-28</td></tr>
+<tr><td>15</td><td class="code broken-code">16/01/898</td><td>ATLAS COPCO</td><td>7 BAR</td><td>الاساسات</td><td>ورش العمرات</td><td>2009</td><td class="fault-cell">معطل ( عمرة محرك )</td><td>2025-03-20</td></tr>
+<tr><td>16</td><td class="code broken-code">16/01/900</td><td>DOOSAN</td><td>7.5 BAR</td><td>ادارة الكبارى</td><td>ورش الكبارى</td><td>2018</td><td class="fault-cell">معطل ( وحدة ضاغط )</td><td>ـــــــــــ</td></tr>
+<tr><td>17</td><td class="code broken-code">16/01/901</td><td>ATLAS COPCO</td><td>7 BAR</td><td>ادارة الانشاءات البحرية</td><td>ورش الانشاءات البحرية</td><td>2013</td><td class="fault-cell">معطل ( طلمبة ورشاشات )</td><td>ـــــــــــ</td></tr></tbody></table></div>
+<div class="page-footer"><span>ورش العمرات - وحدة المعدات الثابتة</span><span class="compressor-page-number-box">صفحة <span class="current">7</span> من 25</span></div>
+</div>
+</div>
+<!-- الصفحة 8: الكمبروسرات تحت التكهين -->
+<div class="page compressor-report-page">
+<div class="page-content">
+<div class="compressor-header-corporate"><div><h1><i class="fas fa-dumpster"></i> ثالثاً: المعدات المرفوعة وتحت التكهين</h1><p>المعدات الغير مجدى اصلاحها ومطلوب تكهينها </p></div><div class="compressor-tag">المجموعة الثالثة</div></div>
+<div class="compressor-section-title scrap"><i class="fas fa-trash-can"></i> الكمبروسرات الموصى بتكهينها  - العدد الإجمالي: 11 معدة</div>
+<div class="compressor-table-box"><table><thead><tr><th style="width:34px;">م</th><th style="width:82px;">كود المعدة ↑</th><th style="width:92px;">ماركة المعدة</th><th style="width:62px;">القدرة</th><th style="width:120px;">الجهة المتعاقد معها</th><th style="width:105px;">مكان التواجد الفعلي</th><th style="width:52px;">سنة الصنع</th><th style="width:64px;">الحالة</th><th>موقف خطابات اللجان والمالية والمخازن للتكهين</th></tr></thead><tbody><tr><td>1</td><td class="code scrap-code">16/01/126</td><td>ATLAS COPCO</td><td>9 BAR</td><td>المشروعات طموه</td><td>موقع طموه</td><td>1982</td><td><span class="compressor-badge scrap">تكهين</span></td><td class="note-cell">معطل ( تحت التكهين الفني )</td></tr>
+<tr><td>2</td><td class="code scrap-code">16/01/129</td><td>ATLAS COPCO</td><td>10 BAR</td><td>فرع الاسكندرية</td><td>فرع الاسكندرية</td><td>1982</td><td><span class="compressor-badge scrap">تكهين</span></td><td class="note-cell">معطل ( تحت التكهين الفني المرفوع )</td></tr>
+<tr><td>3</td><td class="code scrap-code">16/01/782</td><td>INGERSOLL RAND</td><td>11 BAR</td><td>ادارة الكبارى</td><td>موقع الكباري</td><td>2009</td><td><span class="compressor-badge scrap">تكهين</span></td><td class="note-cell">إجراءات لجان التكهين</td></tr>
+<tr><td>4</td><td class="code scrap-code">16/01/806</td><td>ATLAS COPCO</td><td>7 BAR</td><td>ادارة الكبارى</td><td>موقع الكباري</td><td>2003</td><td><span class="compressor-badge scrap">تكهين</span></td><td class="note-cell">إجراءات لجان التكهين</td></tr>
+<tr><td>5</td><td class="code scrap-code">16/01/824</td><td>INGERSOLL RAND</td><td>11 BAR</td><td>فرع الاسكندرية</td><td>ابيس</td><td>2007</td><td><span class="compressor-badge scrap">تكهين</span></td><td class="note-cell">معطل ( تحت التكهين الفني )</td></tr>
+<tr><td>6</td><td class="code scrap-code">16/01/845</td><td>ATLAS COPCO</td><td>11 BAR</td><td>ادارة الكبارى</td><td>مخازن الصالحية</td><td>2011</td><td><span class="compressor-badge scrap">تكهين</span></td><td class="note-cell">معطل ( تحت التكهين ) وتم عمل خطاب للمالية لعمل صرف خارجى بتاريخ 30 / 4 / 2026 للتكهين</td></tr>
+<tr><td>7</td><td class="code scrap-code">16/01/850</td><td>ATLAS COPCO</td><td>11 BAR</td><td>فرع الاسكندرية</td><td>ورش الاسكندرية</td><td>2009</td><td><span class="compressor-badge scrap">تكهين</span></td><td class="note-cell">معطل ( تحت التكهين الفني )</td></tr>
+<tr><td>8</td><td class="code scrap-code">16/01/867</td><td>COMPAIR</td><td>11 BAR</td><td>فرع الاسكندرية</td><td>ورش الاسكندرية</td><td>2009</td><td><span class="compressor-badge scrap">تكهين</span></td><td class="note-cell">معطل ( تحت التكهين الفني )</td></tr>
+<tr><td>9</td><td class="code scrap-code">16/01/890</td><td>ATLAS COPCO</td><td>10 BAR</td><td>ادارة الكبارى</td><td>موقع الكباري</td><td>2011</td><td><span class="compressor-badge scrap">تكهين</span></td><td class="note-cell">إجراءات لجان التكهين</td></tr>
+<tr><td>10</td><td class="code scrap-code">16/01/896</td><td>ATLAS COPCO</td><td>7 BAR</td><td>فرع القناه</td><td>ورش دويتس</td><td>2002</td><td><span class="compressor-badge scrap">تكهين</span></td><td class="note-cell">معطل ( تحت التكهين الفني )</td></tr>
+<tr><td>11</td><td class="code scrap-code">16/01/902</td><td>ATLAS COPCO</td><td>7 BAR</td><td>ادارة الانشاءات البحرية</td><td>ورش العمرات</td><td>2013</td><td><span class="compressor-badge scrap">تكهين</span></td><td class="note-cell">معطل ( تحت التكهين الفني )</td></tr></tbody></table></div>
+<div class="page-footer"><span>ورش العمرات - وحدة المعدات الثابتة</span><span class="compressor-page-number-box">صفحة <span class="current">8</span> من 25</span></div>
+</div>
+</div>
+<!-- الصفحة 9: بيان التمويلات المحولة من إدارات وفروع الشركة لزوم الإصلاحات -->
+<div class="page funding-transfer-page">
+<div class="page-content">
+<div class="funding-header-corporate">
+<div>
+<h1><i class="fas fa-money-bill-transfer"></i> بيان التمويلات المحولة من إدارات وفروع الشركة لزوم الإصلاحات</h1>
+<p>بيان قيمة التحويلات وتواريخها والأكواد الخاصة بالمعدات المطلوب إصلاحها</p>
+</div>
+<div class="funding-header-tag">وحدة المعدات الثابتة</div>
+</div>
+<div class="funding-kpi-container">
+<div class="funding-kpi-card count"><div><h3>عدد التحويلات</h3><div class="val">6</div></div><i class="fas fa-list-ol" style="color:#3b82f6;"></i></div>
+<div class="funding-kpi-card total"><div><h3>إجمالي التمويلات</h3><div class="val">617,500.00</div></div><i class="fas fa-sack-dollar" style="color:#16a34a;"></i></div>
+<div class="funding-kpi-card max"><div><h3>أعلى تحويل</h3><div class="val">230,000.00</div></div><i class="fas fa-arrow-trend-up" style="color:#f59e0b;"></i></div>
+<div class="funding-kpi-card branch"><div><h3>عدد الجهات</h3><div class="val">5</div></div><i class="fas fa-building" style="color:#8b5cf6;"></i></div>
+</div>
+<div class="funding-transfer-card">
+<div class="funding-transfer-title">
+<div class="title-right"><i class="fas fa-table"></i><span>تفاصيل التمويلات المحولة للإصلاحات</span></div>
+<span class="title-note">القيم بالجنيه المصري</span>
+</div>
+<table class="funding-transfer-table">
+<thead>
+<tr>
+<th style="width:42px;">م</th>
+<th style="width:150px;">الإدارة / الفرع</th>
+<th style="width:128px;">قيمة التحويل</th>
+<th style="width:115px;">تاريخ التحويل</th>
+<th style="width:138px;">لزوم إصلاح<br/>مولد / ك</th>
+<th>ملاحظات</th>
+</tr>
+</thead>
+<tbody>
+<tr><td class="serial">1</td><td class="branch-name">ترسانة المعصرة</td><td class="amount">78,000.00</td><td class="date-cell">26/01/15</td><td class="equipment-code">669 / 2 / 27</td><td class="notes-cell">—</td></tr>
+<tr><td class="serial">2</td><td class="branch-name">صيانة الآثار والقصور</td><td class="amount">16,500.00</td><td class="date-cell">26/02/15</td><td class="equipment-code">1502 / 2 / 207</td><td class="notes-cell">—</td></tr>
+<tr><td class="serial">3</td><td class="branch-name">فرع مدينة نصر</td><td class="amount">70,000.00</td><td class="date-cell">26/02/22</td><td class="equipment-code">786 / 1 / 16</td><td class="notes-cell">—</td></tr>
+<tr><td class="serial">4</td><td class="branch-name">فرع مدينة نصر</td><td class="amount">23,000.00</td><td class="date-cell">26/02/24</td><td class="equipment-code">903 / 1 / 16</td><td class="notes-cell">—</td></tr>
+<tr><td class="serial">5</td><td class="branch-name">إدارة الأنفاق</td><td class="amount">200,000.00</td><td class="date-cell">26/03/08</td><td class="equipment-code">765 / 1 / 16</td><td class="notes-cell">—</td></tr>
+<tr><td class="serial">6</td><td class="branch-name">ترسانة المعصرة</td><td class="amount">230,000.00</td><td class="date-cell">26/02/09</td><td class="equipment-code">1260 / 2 / 27</td><td class="notes-cell">—</td></tr>
+</tbody>
+<tfoot>
+<tr>
+<td class="total-label" colspan="2">الإجمالي</td>
+<td class="total-value" colspan="3">617,500.00</td>
+<td class="notes-cell"></td>
+</tr>
+</tfoot>
+</table>
+</div>
+
+<div class="page-footer">
+<span>وحدة المعدات الثابتة - بيان التمويلات المحولة للإصلاحات</span>
+<span class="page-number"><i class="fas fa-money-bill-transfer"></i> صفحة <span class="current-page">9</span> من <span class="total-pages">25</span></span>
+</div>
+</div>
+</div>
+<!-- الصفحة 10: مقارنة الأداء المالي -->
+<div class="page">
+<div class="page-content">
+<div class="header-main" style="background: var(--ac-black); color: white; padding: 12px 20px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+<div>
+<h1 style="margin:0; font-size: 22px;">مقارنة الأداء المالي للقطاعات</h1>
+<span style="opacity: 0.7; font-size: 12px;">العام المالي 2025-2026</span>
+</div>
+<div style="text-align: left;">
+<div style="font-size: 11px; opacity: 0.6;">إجمالي 3 أرباع مالية</div>
+<div style="font-size: 18px; color: var(--ac-yellow); font-weight: 900;">126,385,245 ج.م</div>
+</div>
+</div>
+<div class="kpi-grid">
+<div class="kpi-card" style="border-right: 5px solid var(--ac-black);">
+<h3><i class="fas fa-city"></i> قطاع القاهرة الكبرى</h3>
+<div class="price-row">
+<span><span class="date-tag">من 2025/07/01 إلى 2025/09/30</span></span>
+<b>31,185,727</b>
+</div>
+<div class="price-row">
+<span><span class="date-tag">من 2025/10/01 إلى 2025/12/31</span></span>
+<b>28,214,092</b>
+</div>
+<div class="price-row">
+<span><span class="date-tag">من  2026/01/01 إلى 2026/03/31</span></span>
+<b>26,747,693</b>
+</div>
+<div class="growth-down">▼ 5.2% مقارنة بالربع السابق بعد دمج إدارات أخرى</div>
+</div>
+<div class="kpi-card" style="border-right: 5px solid var(--ac-yellow);">
+<h3><i class="fas fa-water"></i> قطاع وجه بحري</h3>
+<div class="price-row">
+<span><span class="date-tag">من 2025/07/01 إلى 2025/09/30</span></span>
+<b>11,600,053</b>
+</div>
+<div class="price-row">
+<span><span class="date-tag">من 2025/10/01 إلى 2025/12/31</span></span>
+<b>11,762,640</b>
+</div>
+<div class="price-row">
+<span><span class="date-tag">من  2026/01/01 إلى 2026/03/31</span></span>
+<b>10,628,558</b>
+</div>
+<div class="growth-down">▼ 9.6% انخفاض</div>
+</div>
+<div class="kpi-card" style="border-right: 5px solid var(--ac-black);">
+<h3><i class="fas fa-landmark"></i> قطاع وجه قبلي</h3>
+<div class="price-row">
+<span><span class="date-tag">من 2025/07/01 إلى 2025/09/30</span></span>
+<b>2,133,460</b>
+</div>
+<div class="price-row">
+<span><span class="date-tag">من 2025/10/01 إلى 2025/12/31</span></span>
+<b>2,152,516</b>
+</div>
+<div class="price-row">
+<span><span class="date-tag">من  2026/01/01 إلى 2026/03/31</span></span>
+<b>1,960,506</b>
+</div>
+<div class="growth-down">▼ 8.9% انخفاض</div>
+</div>
+</div>
+<div class="visual-section" style="flex: 1;">
+<div class="trend-chart-box">
+<h4 style="margin: 0 0 8px 0; font-size: 14px;"><i class="fas fa-chart-bar"></i> المقارنة للإيرادات حسب الفترة</h4>
+<div class="chart-inner" style="height: 200px;">
+<canvas id="periodChart"></canvas>
+</div>
+</div>
+</div>
+<div class="page-footer">
+<span></span>
+<span class="page-number"><i class="fas fa-chart-simple"></i> صفحة <span class="current-page">10</span> من <span class="total-pages">25</span></span>
+</div>
+</div>
+</div>
+
+<!-- الصفحة 11: إيرادات الربع الاول -->
+<div class="page">
+<div class="page-content">
+<div class="header">
+<div class="header-titles">
+<h1><i class="fas fa-hand-holding-usd"></i> تقرير إيرادات الربع الاول 2025</h1>
+<p>من 25/07/01 إلى 2025/09/30</p>
+</div>
+</div>
+<div class="sectors-grid">
+<div class="sector-card">
+<div class="sector-title">قطاع القاهرة الكبرى</div>
+<table>
+<thead><tr><th>الشهر</th><th>تاريخ الاستحقاق</th><th>الإيراد</th></tr></thead>
+<tbody>
+<tr><td>يوليو</td><td>31-07-2025</td><td>10,269,532</td></tr>
+<tr><td>أغسطس</td><td>31-08-2025</td><td>10,839,149</td></tr>
+<tr><td>سبتمبر</td><td>30-09-2025</td><td>10,077,046</td></tr>
+</tbody>
+</table>
+<div class="chart-box"><canvas id="chartCairoRevQ3"></canvas></div>
+<div class="total-badge">إجمالي: 31,185,727</div>
+</div>
+<div class="sector-card">
+<div class="sector-title">قطاع وجه بحري</div>
+<table>
+<thead><tr><th>الشهر</th><th>تاريخ الاستحقاق</th><th>الإيراد</th></tr></thead>
+<tbody>
+<tr><td>يوليو</td><td>31-07-2025</td><td>3,910,175</td></tr>
+<tr><td>أغسطس</td><td>31-08-2025</td><td>3,841,123</td></tr>
+<tr><td>سبتمبر</td><td>30-09-2025</td><td>3,848,755</td></tr>
+</tbody>
+</table>
+<div class="chart-box"><canvas id="chartBahriRevQ3"></canvas></div>
+<div class="total-badge">إجمالي: 11,600,053</div>
+</div>
+<div class="sector-card">
+<div class="sector-title">قطاع وجه قبلي</div>
+<table>
+<thead><tr><th>الشهر</th><th>تاريخ الاستحقاق</th><th>الإيراد</th></tr></thead>
+<tbody>
+<tr><td>يوليو</td><td>31-07-2025</td><td>697,785</td></tr>
+<tr><td>أغسطس</td><td>31-08-2025</td><td>740,135</td></tr>
+<tr><td>سبتمبر</td><td>30-09-2025</td><td>695,540</td></tr>
+</tbody>
+</table>
+<div class="chart-box"><canvas id="chartQebliRevQ3"></canvas></div>
+<div class="total-badge">إجمالي: 2,133,460</div>
+</div>
+</div>
+<div class="page-footer">
+<span></span>
+<span class="page-number"><i class="fas fa-hand-holding-usd"></i> صفحة <span class="current-page">11</span> من <span class="total-pages">25</span></span>
+</div>
+</div>
+</div>
+
+<!-- الصفحة 12: إيرادات الربع الثانى -->
+<div class="page">
+<div class="page-content">
+<div class="header">
+<div class="header-titles">
+<h1><i class="fas fa-chart-line"></i> تقرير إيرادات الربع الثانى 2025</h1>
+<p>من 2025/10/01 إلى 2025/12/31</p>
+</div>
+</div>
+<div class="sectors-grid">
+<div class="sector-card">
+<div class="sector-title">قطاع القاهرة الكبرى</div>
+<table>
+<thead><tr><th>الشهر</th><th>تاريخ الاستحقاق</th><th>الإيراد</th></tr></thead>
+<tbody>
+<tr><td>أكتوبر</td><td>31-10-2025</td><td>9,492,991</td></tr>
+<tr><td>نوفمبر</td><td>30-11-2025</td><td>9,253,926</td></tr>
+<tr><td>ديسمبر</td><td>31-12-2025</td><td>9,467,175</td></tr>
+</tbody>
+</table>
+<div class="chart-box"><canvas id="chartCairoRevQ4"></canvas></div>
+<div class="total-badge">إجمالي: 28,214,092</div>
+</div>
+<div class="sector-card">
+<div class="sector-title">قطاع وجه بحري</div>
+<table>
+<thead><tr><th>الشهر</th><th>تاريخ الاستحقاق</th><th>الإيراد</th></tr></thead>
+<tbody>
+<tr><td>أكتوبر</td><td>31-10-2025</td><td>3,963,081</td></tr>
+<tr><td>نوفمبر</td><td>30-11-2025</td><td>3,730,691</td></tr>
+<tr><td>ديسمبر</td><td>31-12-2025</td><td>4,068,868</td></tr>
+</tbody>
+</table>
+<div class="chart-box"><canvas id="chartBahriRevQ4"></canvas></div>
+<div class="total-badge">إجمالي: 11,762,640</div>
+</div>
+<div class="sector-card">
+<div class="sector-title">قطاع وجه قبلي</div>
+<table>
+<thead><tr><th>الشهر</th><th>تاريخ الاستحقاق</th><th>الإيراد</th></tr></thead>
+<tbody>
+<tr><td>أكتوبر</td><td>31-10-2025</td><td>709,660</td></tr>
+<tr><td>نوفمبر</td><td>30-11-2025</td><td>724,888</td></tr>
+<tr><td>ديسمبر</td><td>31-12-2025</td><td>717,968</td></tr>
+</tbody>
+</table>
+<div class="chart-box"><canvas id="chartQebliRevQ4"></canvas></div>
+<div class="total-badge">إجمالي: 2,152,516</div>
+</div>
+</div>
+<div class="page-footer">
+<span></span>
+<span class="page-number"><i class="fas fa-file-invoice-dollar"></i> صفحة <span class="current-page">12</span> من <span class="total-pages">25</span></span>
+</div>
+</div>
+</div>
+
+<!-- الصفحة 13: إيرادات الربع الثالث 2026 -->
+<div class="page">
+<div class="page-content">
+<div class="header">
+<div class="header-titles">
+<h1><i class="fas fa-calendar-days"></i> تقرير إيرادات الربع الثالث 2026</h1>
+<p>من  2026/01/01 إلى 2026/03/31 - بعد دمج بند إدارات أخرى داخل قطاع القاهرة الكبرى</p>
+</div>
+</div>
+
+<div class="sectors-grid">
+<div class="sector-card">
+<div class="sector-title">قطاع القاهرة الكبرى <span style="font-size:10px;color:#666;">+ إدارات أخرى</span></div>
+<table>
+<thead><tr><th>الشهر</th><th>قاهرة كبرى</th><th>إدارات أخرى</th><th>الإيراد بعد الدمج</th></tr></thead>
+<tbody>
+<tr><td>يناير</td><td>9,553,900</td><td>426,650</td><td>9,980,550</td></tr>
+<tr><td>فبراير</td><td>8,688,325</td><td>384,950</td><td>9,073,275</td></tr>
+<tr><td>مارس</td><td>7,308,768</td><td>385,100</td><td>7,693,868</td></tr>
+</tbody>
+</table>
+<div class="chart-box"><canvas id="chartCairoRevQ1_2026"></canvas></div>
+<div class="total-badge">إجمالي: 26,747,693</div>
+</div>
+<div class="sector-card">
+<div class="sector-title">قطاع وجه بحري</div>
+<table>
+<thead><tr><th>الشهر</th><th>تاريخ الاستحقاق</th><th>الإيراد</th></tr></thead>
+<tbody>
+<tr><td>يناير</td><td>31-01-2026</td><td>3,751,760</td></tr>
+<tr><td>فبراير</td><td>28-02-2026</td><td>3,460,294</td></tr>
+<tr><td>مارس</td><td>31-03-2026</td><td>3,416,504</td></tr>
+</tbody>
+</table>
+<div class="chart-box"><canvas id="chartBahriRevQ1_2026"></canvas></div>
+<div class="total-badge">إجمالي: 10,628,558</div>
+</div>
+<div class="sector-card">
+<div class="sector-title">قطاع وجه قبلي</div>
+<table>
+<thead><tr><th>الشهر</th><th>تاريخ الاستحقاق</th><th>الإيراد</th></tr></thead>
+<tbody>
+<tr><td>يناير</td><td>31-01-2026</td><td>655,956</td></tr>
+<tr><td>فبراير</td><td>28-02-2026</td><td>627,900</td></tr>
+<tr><td>مارس</td><td>31-03-2026</td><td>676,650</td></tr>
+</tbody>
+</table>
+<div class="chart-box"><canvas id="chartQebliRevQ1_2026"></canvas></div>
+<div class="total-badge">إجمالي: 1,960,506</div>
+</div>
+</div>
+<div class="grand-total-display" style="margin-top:10px;background:linear-gradient(135deg,#1a2a6c,#0f3443);padding:10px;">
+<div style="font-size:13px;">إجمالي قيمة مطالبات الربع الثالث</div>
+<div style="font-size:28px;font-weight:900;color:#fdbb2d;">39,336,757 ج.م</div>
+</div>
+<div class="page-footer"><span></span><span class="page-number"><i class="fas fa-calendar-days"></i> صفحة <span class="current-page">13</span> من <span class="total-pages">25</span></span></div>
+</div>
+</div>
+<!-- الصفحة 14: بيان تكلفة الإصلاح لكمبروسرات وحدة المعدات الثابتة -->
+<div class="page repair-plan-page enhanced">
+<div class="page-content">
+<div class="repair-plan-header">
+<div class="repair-plan-title">
+<h1><i class="fas fa-compress-arrows-alt"></i> بيان تكلفة الإصلاح لكمبروسرات وحدة المعدات الثابتة</h1>
+<p> </p>
+</div>
+<div class="repair-plan-no">الخطة رقم 5</div>
+<div class="repair-plan-date">20 / 5 / 2026</div>
+</div>
+<div class="repair-summary-row">
+<div class="repair-summary-card"><div><div class="label">عدد المعدات</div><div class="value">5</div></div><i class="fas fa-layer-group"></i></div>
+<div class="repair-summary-card"><div><div class="label">ما تم صرفه</div><div class="value">332,978</div></div><i class="fas fa-coins"></i></div>
+<div class="repair-summary-card"><div><div class="label">التكلفة التقديرية</div><div class="value">1,750,000</div></div><i class="fas fa-file-invoice-dollar"></i></div>
+<div class="repair-summary-card"><div><div class="label">المطلوب استكماله</div><div class="value">1,417,022</div></div><i class="fas fa-screwdriver-wrench"></i></div>
+</div>
+<div class="repair-table-wrap">
+<table class="repair-table">
+<thead>
+<tr>
+<th style="width:26px;">م</th>
+<th style="width:62px;">نوع المعدة</th>
+<th style="width:78px;">كود المعدة</th>
+<th style="width:42px;">القدرة</th>
+<th style="width:48px;">سنة الصنع</th>
+<th style="width:100px;">نوع المحرك</th>
+<th style="width:70px;">رقم التشغيل</th>
+<th>الأعمال / موقف الإصلاح</th>
+<th style="width:62px;">ما تم صرفه<br/>بالجنيه</th>
+<th style="width:70px;">التكلفة<br/>التقديرية</th>
+<th style="width:62px;">تاريخ الدخول</th>
+<th style="width:58px;">تاريخ الخروج</th>
+<th style="width:82px;">الجهة القادم منها</th>
+<th style="width:120px;">ملاحظات</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>1</td><td>كمبروسر</td><td class="ltr">16 / 1 / 791</td><td>17</td><td>1998</td><td class="brand">CATERPILLAR</td><td class="ltr">10189/4</td><td class="work-cell">ضبط طلمبة ورشاشات</td><td class="money">252,500</td><td class="money">400,000</td><td>24/07/12</td><td>—</td><td>طموه</td><td class="notes-cell">لم يتم التمويل تحت الإصلاح</td></tr>
+<tr><td>2</td><td>كمبروسر</td><td class="ltr">16 / 1 / 816</td><td>7</td><td>2005</td><td class="brand">SULLAIR</td><td class="ltr">10192/4</td><td class="work-cell">عمرة محرك</td><td class="money">59,714</td><td class="money">250,000</td><td>26/09/03</td><td>—</td><td>تأجير المعدات</td><td class="notes-cell">لم يتم التمويل تحت الإصلاح</td></tr>
+<tr><td>3</td><td>كمبروسر</td><td class="ltr">16 / 1 / 857</td><td>8</td><td>2009</td><td class="brand">INGERSOLL RAND</td><td class="ltr">10400/4</td><td class="work-cell">وجود خلط ماء بالزيت ووجود تلف بغرفة الرشاشات</td><td class="money">20,764</td><td class="money">200,000</td><td>18/12/2025</td><td>—</td><td>الخط الرابع</td><td class="notes-cell">لم يتم التمويل تحت الإصلاح</td></tr>
+<tr><td>4</td><td>كمبروسر</td><td class="ltr">16 / 1 / 879</td><td>10</td><td>2009</td><td class="brand">ATLAS COPCO</td><td class="ltr">10271/4</td><td class="work-cell">تلف وحدة ضاغط + تلف بدائرة الهواء + تلف فلتر وعة الهواء + تلف خزان الزيت بالفاصل + عمرة محرك</td><td class="money">0</td><td class="money">600,000</td><td>24/4/2026</td><td>—</td><td>إدارة المشروعات</td><td class="notes-cell">لم يتم التمويل تحت الإصلاح</td></tr>
+<tr><td>5</td><td>كمبروسر</td><td class="ltr">16 / 1 / 873</td><td>10</td><td>2010</td><td class="brand">ATLAS COPCO</td><td class="ltr">10064/7</td><td class="work-cell">جاري الكشف والإصلاح</td><td class="money">0</td><td class="money">300,000</td><td>14/5/2026</td><td>—</td><td>حلوان</td><td class="notes-cell">لم يتم التمويل تحت الإصلاح</td></tr>
+<tr class="repair-total-row"><td colspan="8">الإجمالي</td><td class="money">332,978</td><td class="money">1,750,000</td><td colspan="4">المطلوب استكمال تمويله: 1,417,022 جنيه</td></tr>
+</tbody>
+</table>
+</div>
+<div class="page-footer"><span>وحدة المعدات الثابتة - إدارة ورش العمرات</span><span class="page-number"><i class="fas fa-clipboard-list"></i> صفحة <span class="current-page">14</span> من <span class="total-pages">25</span></span></div>
+</div>
+</div>
+<!-- الصفحة 15: بيان تكلفة الإصلاح لمولدات وحدة المعدات الثابتة -->
+<div class="page repair-plan-page enhanced">
+<div class="page-content">
+<div class="repair-plan-header">
+<div class="repair-plan-title">
+<h1><i class="fas fa-bolt"></i> بيان تكلفة الإصلاح لمولدات وحدة المعدات الثابتة</h1>
+<p> </p>
+</div>
+<div class="repair-plan-no">الخطة رقم 5</div>
+<div class="repair-plan-date">20 / 5 / 2026</div>
+</div>
+<div class="repair-summary-row">
+<div class="repair-summary-card"><div><div class="label">عدد المعدات</div><div class="value">7</div></div><i class="fas fa-layer-group"></i></div>
+<div class="repair-summary-card"><div><div class="label">ما تم صرفه</div><div class="value">636,417</div></div><i class="fas fa-coins"></i></div>
+<div class="repair-summary-card"><div><div class="label">التكلفة التقديرية</div><div class="value">2,095,000</div></div><i class="fas fa-file-invoice-dollar"></i></div>
+<div class="repair-summary-card"><div><div class="label">المطلوب استكماله</div><div class="value">1,458,583</div></div><i class="fas fa-screwdriver-wrench"></i></div>
+</div>
+<div class="repair-table-wrap">
+<table class="repair-table">
+<thead>
+<tr>
+<th style="width:26px;">م</th>
+<th style="width:62px;">نوع المعدة</th>
+<th style="width:78px;">كود المعدة</th>
+<th style="width:42px;">القدرة</th>
+<th style="width:48px;">سنة الصنع</th>
+<th style="width:100px;">نوع المحرك</th>
+<th style="width:70px;">رقم التشغيل</th>
+<th>الأعمال / موقف الإصلاح</th>
+<th style="width:62px;">ما تم صرفه<br/>بالجنيه</th>
+<th style="width:70px;">التكلفة<br/>التقديرية</th>
+<th style="width:62px;">تاريخ الدخول</th>
+<th style="width:58px;">تاريخ الخروج</th>
+<th style="width:82px;">الجهة القادم منها</th>
+<th style="width:120px;">ملاحظات</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>1</td><td>ماكينة توليد</td><td class="ltr">27 / 2 / 1164</td><td>150</td><td>2007</td><td class="brand">OLYMPIAN</td><td class="ltr">10289/4</td><td class="work-cell">تحت الاختبار والتجربة</td><td class="money">114,731</td><td class="money">200,000</td><td>24/11/01</td><td>—</td><td>ترسانة الاسماعيلية</td><td class="notes-cell">لم يتم التمويل تحت الإصلاح</td></tr>
+<tr><td>2</td><td>ماكينة توليد</td><td class="ltr">27 / 2 / 1407</td><td>200</td><td>2010</td><td class="brand">STAMFORD</td><td class="ltr">10005/4</td><td class="work-cell">عمرة رشاشات</td><td class="money">45,528</td><td class="money">250,000</td><td>25/12/2023</td><td>—</td><td>إدارة الكباري</td><td class="notes-cell">لم يتم التمويل تحت الإصلاح</td></tr>
+<tr><td>3</td><td>ماكينة توليد</td><td class="ltr">27 / 2 / 1406</td><td>365</td><td>2010</td><td class="brand">CATERPILLAR</td><td class="ltr">10229/4</td><td class="work-cell">جاري شراء رشاشات + لواسيل كاتم مياه + جوان وش سلندر</td><td class="money">22,998</td><td class="money">300,000</td><td>26/12/01</td><td>—</td><td>مشروع المونوريل</td><td class="notes-cell">لم يتم التمويل تحت الإصلاح</td></tr>
+<tr><td>4</td><td>ماكينة توليد</td><td class="ltr">27 / 2 / 1057</td><td>60</td><td>1999</td><td class="brand">IVECO</td><td class="ltr">10174/4</td><td class="work-cell">سخونة بالمحرك</td><td class="money">191,798</td><td class="money">275,000</td><td>25/03/06</td><td>—</td><td>فرع الاسكندرية</td><td class="notes-cell">لم يتم التمويل تحت الإصلاح</td></tr>
+<tr><td>5</td><td>ماكينة توليد</td><td class="ltr">27 / 2 / 1286</td><td>300</td><td>2010</td><td class="brand">STAMFORD</td><td class="ltr">10284/4</td><td class="work-cell">كاتم محرك وعمل صيانة</td><td class="money">190,768</td><td class="money">450,000</td><td>30/1/2024</td><td>—</td><td>إدارة الكباري</td><td class="notes-cell">لم يتم التمويل تحت الإصلاح</td></tr>
+<tr><td>6</td><td>ماكينة توليد</td><td class="ltr">27 / 2 / 1437</td><td>100</td><td>2020</td><td class="brand">HELWAN</td><td class="ltr">10037/4</td><td class="work-cell">عمرة تم استخراج أمر توريد وانتظار قطع الغيار</td><td class="money">15,936</td><td class="money">300,000</td><td>25/06/02</td><td>—</td><td>مدينة نصر</td><td class="notes-cell">لم يتم التمويل تحت الإصلاح</td></tr>
+<tr><td>7</td><td>ماكينة توليد</td><td class="ltr">27 / 2 / 1397</td><td>100</td><td>2017</td><td class="brand">STAMFORD</td><td class="ltr">10092/4</td><td class="work-cell">جاري شراء محرك استيراد + شراء ريداتير</td><td class="money">54,658</td><td class="money">320,000</td><td>22/1/2025</td><td>—</td><td>فرع شرق ووسط</td><td class="notes-cell">لم يتم التمويل تحت الإصلاح</td></tr>
+<tr class="repair-total-row"><td colspan="8">الإجمالي</td><td class="money">636,417</td><td class="money">2,095,000</td><td colspan="4">المطلوب استكمال تمويله: 1,458,583 جنيه</td></tr>
+</tbody>
+</table>
+</div>
+<div class="page-footer"><span>وحدة المعدات الثابتة - إدارة ورش العمرات</span><span class="page-number"><i class="fas fa-clipboard-list"></i> صفحة <span class="current-page">15</span> من <span class="total-pages">25</span></span></div>
+</div>
+</div>
+<!-- الصفحة 16: بيانات الزيارة واللجنة القائمة بالمعاينة -->
+<div class="page field-visit-page">
+<div class="page-content">
+<div class="visit-header">
+<div>
+<h1><i class="fas fa-clipboard-check"></i> بيان الزيارات الميدانية لمتابعة المعدات</h1>
+<p>تقرير زيارة مخازن الصالحية - إدارة الكباري لمتابعة الموقف الفني للمولدات والكمبروسرات</p>
+</div>
+<div class="visit-badge">مخازن الصالحية - إدارة الكباري</div>
+<div class="visit-date">28 / 03 / 2026</div>
+</div>
+<div class="visit-kpis">
+<div class="visit-kpi"><div><div class="label">إجمالي المعدات محل الزيارة</div><div class="value">14</div></div><i class="fas fa-layer-group"></i></div>
+<div class="visit-kpi"><div><div class="label">ماكينات توليد كهرباء</div><div class="value">10</div></div><i class="fas fa-bolt"></i></div>
+<div class="visit-kpi"><div><div class="label">كمبروسرات هواء</div><div class="value">4</div></div><i class="fas fa-compress-arrows-alt"></i></div>
+<div class="visit-kpi"><div><div class="label">أعضاء لجنة المعاينة</div><div class="value">3</div></div><i class="fas fa-users-gear"></i></div>
+</div>
+<div class="visit-main-layout">
+<div class="visit-hero-card">
+<div class="visit-card-title"><i class="fas fa-circle-info"></i> بيانات الزيارة الميدانية</div>
+<div class="visit-info-grid">
+<div class="visit-info-box"><div class="small-title">تاريخ الزيارة</div><div class="big-value">السبت الموافق 28 / 03 / 2026</div></div>
+<div class="visit-info-box"><div class="small-title">مكان الزيارة</div><div class="big-value">مخازن الصالحية - إدارة الكباري</div></div>
+<div class="visit-info-box"><div class="small-title">نطاق المعاينة</div><div class="big-value">معدات الوحدة الثابتة داخل المخازن</div></div>
+<div class="visit-info-box"><div class="small-title">نوع المعدات</div><div class="big-value">مولدات كهرباء + كمبروسرات هواء</div></div>
+</div>
+<div class="visit-objective-box">
+<i class="fas fa-bullseye"></i>
+                    الهدف من الزيارة: الوقوف على الموقف الحالي لمعدات الوحدة الثابتة الموجودة داخل مخازن الصالحية، ومراجعة الحالة الفنية الظاهرية للمولدات والكمبروسرات، وتحديد المعدات المفككة أو الناقصة أو غير الصالحة تمهيداً لاتخاذ الإجراءات الفنية والمخزنية المناسبة.
+                </div>
+<div class="visit-notes">
+<div class="visit-note"><i class="fas fa-check-circle"></i> تم تنفيذ المعاينة بمعرفة لجنة من وحدة المعدات الثابتة والمتابعة الفنية وفني الكهرباء بالوحدة.</div>
+<div class="visit-note"><i class="fas fa-sitemap"></i> تم تقسيم المعدات محل المعاينة إلى مولدات كهرباء وكمبروسرات هواء مع بيان حالة كل معدة طبقاً لما تم رصده بالموقع.</div>
+<div class="visit-note"><i class="fas fa-file-signature"></i> يتم استخدام نتائج الزيارة كمرجع لمتابعة إجراءات التكهين أو الاستكمال أو إعادة التصنيف حسب حالة كل معدة.</div>
+</div>
+</div>
+<div class="committee-modern-card">
+<div class="visit-card-title"><i class="fas fa-users-gear"></i> اللجنة القائمة بالمعاينة</div>
+<div class="committee-member"><div class="committee-avatar"><i class="fas fa-user-tie"></i></div><div><div class="committee-name">السيد المهندس / مجدي خريش</div><div class="committee-role">مدير وحدة المعدات الثابتة</div></div></div>
+<div class="committee-member"><div class="committee-avatar"><i class="fas fa-user-check"></i></div><div><div class="committee-name">السيد الأستاذ / محمد فتحي</div><div class="committee-role">مدير المتابعة الفنية</div></div></div>
+<div class="committee-member"><div class="committee-avatar"><i class="fas fa-bolt"></i></div><div><div class="committee-name">فني كهرباء / إبراهيم أحمد</div><div class="committee-role">فني الكهرباء بالوحدة</div></div></div>
+<div class="visit-summary-strip">
+<div>مولدات: 10</div>
+<div>كمبروسرات: 4</div>
+<div>إجمالي: 14</div>
+</div>
+<div class="visit-objective-box" style="margin-top:12px;">
+<i class="fas fa-clipboard-list"></i>
+                    خلاصة الزيارة تؤكد ضرورة سرعة استكمال الإجراءات الخاصة بالمعدات غير الصالحة أو المفككة داخل المخازن حفاظاً على سلامة البيانات والموقف المخزني والفني.
+                </div>
+</div>
+</div>
+<div class="page-footer"><span>وحدة المعدات الثابتة - متابعة ميدانية للمعدات</span><span class="page-number"><i class="fas fa-route"></i> صفحة <span class="current-page">16</span> من <span class="total-pages">25</span></span></div>
+</div>
+</div>
+<!-- الصفحة 17: خلاصة المعدات التي تمت معاينتها داخل المخازن -->
+<div class="page field-visit-page">
+<div class="page-content">
+<div class="visit-header">
+<div>
+<h1><i class="fas fa-warehouse"></i> خلاصة المعدات التي تمت معاينتها داخل المخازن</h1>
+<p>ملخص فني للمعدات التي تم حصرها أثناء زيارة مخازن الصالحية - إدارة الكباري</p>
+</div>
+<div class="visit-badge">خلاصة المعاينة</div>
+<div class="visit-date">28 / 03 / 2026</div>
+</div>
+<div class="visit-kpis">
+<div class="visit-kpi"><div><div class="label">إجمالي المعدات</div><div class="value">14</div></div><i class="fas fa-layer-group"></i></div>
+<div class="visit-kpi"><div><div class="label">مولدات بعالية</div><div class="value">8</div></div><i class="fas fa-bolt"></i></div>
+<div class="visit-kpi"><div><div class="label">مولدات مفككة / ناقصة</div><div class="value">2</div></div><i class="fas fa-screwdriver-wrench"></i></div>
+<div class="visit-kpi"><div><div class="label">كمبروسرات مفككة</div><div class="value">4</div></div><i class="fas fa-compress-arrows-alt"></i></div>
+</div>
+<div class="visit-equipment-summary-grid">
+<div class="visit-category-card">
+<div class="visit-category-title"><div><i class="fas fa-bolt"></i> أولاً: المولدات</div><span>10 معدات</span></div>
+<table class="visit-equipment-table">
+<thead><tr><th style="width:32px;">م</th><th style="width:140px;">كود المعدة</th><th>الموقف الفني المختصر</th></tr></thead>
+<tbody>
+<tr><td>1</td><td class="ltr">1378 - 1388 - 1278 - 1208 - 1314 - 1301 - 1303 - 173</td><td>عدد 8 مولدات بعالية بدون محركات ديزل / جنريتور فقط.</td></tr>
+<tr><td>2</td><td class="ltr">27 / 2 / 1302</td><td class="status-red">مولد لا يوجد به محرك ولا يوجد به جنريتور كهرباء.</td></tr>
+<tr><td>3</td><td class="ltr">27 / 2 / 730</td><td class="status-orange">المولد كامل ولكن مفكك: رشاشات - طلمبة جاز.</td></tr>
+</tbody>
+</table>
+</div>
+<div class="visit-category-card">
+<div class="visit-category-title"><div><i class="fas fa-compress-arrows-alt"></i> ثانياً: الكمبروسرات</div><span>4 معدات</span></div>
+<table class="visit-equipment-table">
+<thead><tr><th style="width:32px;">م</th><th style="width:115px;">كود المعدة</th><th>الموقف الفني المختصر</th></tr></thead>
+<tbody>
+<tr><td>1</td><td class="ltr">16 / 1 / 782</td><td>الكباسور عبارة عن كبينة فقط بدون محرك + وحدة.</td></tr>
+<tr><td>2</td><td class="ltr">16 / 1 / 806</td><td>الكمبروسر مفكك تماماً: محرك + وحدة، وملقاة داخل الكابينة.</td></tr>
+<tr><td>3</td><td class="ltr">16 / 1 / 890</td><td>الكمبروسر مفكك تماماً ولا يوجد محرك ديزل / وحدة فقط.</td></tr>
+<tr><td>4</td><td class="ltr">16 / 1 / 845</td><td>الكمبروسر مفكك تماماً ولا يوجد محرك ديزل / وحدة فقط.</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="visit-action-note">
+<i class="fas fa-triangle-exclamation"></i>
+<div>ملحوظة هامة: تم إعداد صرف خارجي لإدارة الكباري رقم 160 بتاريخ 17 / 5 / 2026، ومنتظر الموافقة عليه لإمكانية تكهين المعدات والسير في الإجراءات الرسمية.</div>
+</div>
+<div style="margin-top:9px;background:#eef4fb;border:1px solid #cbd5e1;border-radius:10px;padding:9px 11px;font-size:12px;font-weight:900;color:#1a2a6c;line-height:1.7;">
+<i class="fas fa-clipboard-list" style="color:#fdbb2d;"></i>
+            التوصية: اعتماد نتائج المعاينة ضمن موقف المعدات غير الجاهزة، واتخاذ ما يلزم فنياً ومخزنياً بشأن الاستكمال أو التكهين أو إعادة التصنيف طبقاً لحالة كل معدة.
+        </div>
+<div class="page-footer"><span>وحدة المعدات الثابتة - خلاصة معاينة مخازن الصالحية</span><span class="page-number"><i class="fas fa-warehouse"></i> صفحة <span class="current-page">17</span> من <span class="total-pages">25</span></span></div>
+</div>
+</div>
+<!-- الصفحة 18: بيانات زيارة فرع مدينة نصر واللجنة القائمة بالمعاينة -->
+<div class="page field-visit-page">
+<div class="page-content">
+<div class="visit-header">
+<div>
+<h1><i class="fas fa-clipboard-check"></i> بيان زيارة ميدانية لمتابعة المعدات</h1>
+<p>تقرير فني لمعدات وحدة المعدات الثابتة المتواجدة بمخازن بدر التابعة لفرع مدينة نصر</p>
+</div>
+<div class="visit-badge">مخازن بدر - فرع مدينة نصر</div>
+<div class="visit-date">17 / 05 / 2026</div>
+</div>
+<div class="visit-kpis">
+<div class="visit-kpi"><div><div class="label">إجمالي المعدات محل المعاينة</div><div class="value">5</div></div><i class="fas fa-layer-group"></i></div>
+<div class="visit-kpi"><div><div class="label">ماكينات توليد كهرباء</div><div class="value">5</div></div><i class="fas fa-bolt"></i></div>
+<div class="visit-kpi"><div><div class="label">موقف فني</div><div class="value" style="font-size:22px;">تكهين</div></div><i class="fas fa-recycle"></i></div>
+<div class="visit-kpi"><div><div class="label">أمر الصرف الخارجي</div><div class="value">159</div></div><i class="fas fa-file-signature"></i></div>
+</div>
+<div class="visit-main-layout">
+<div class="visit-hero-card">
+<div class="visit-card-title"><i class="fas fa-circle-info"></i> بيانات الزيارة الميدانية</div>
+<div class="visit-info-grid">
+<div class="visit-info-box"><div class="small-title">تاريخ الإجراء</div><div class="big-value">17 / 05 / 2026</div></div>
+<div class="visit-info-box"><div class="small-title">مكان الزيارة</div><div class="big-value">مخازن بدر - فرع مدينة نصر</div></div>
+<div class="visit-info-box"><div class="small-title">نطاق المعاينة</div><div class="big-value">معدات وحدة المعدات الثابتة داخل المخازن</div></div>
+<div class="visit-info-box"><div class="small-title">نوع المعدات</div><div class="big-value">ماكينات توليد كهرباء</div></div>
+</div>
+<div class="visit-objective-box">
+<i class="fas fa-bullseye"></i>
+                    الهدف من الزيارة: الوقوف على الحالة الفنية النهائية لعدد 5 ماكينات توليد كهرباء متواجدة بمخازن بدر التابعة لفرع مدينة نصر، ومراجعة مدى جدوى الإصلاح في ضوء الحالة الفنية وارتفاع تكلفة الإصلاح مقارنة بالقيمة الاقتصادية للمعدات.
+                </div>
+<div class="visit-notes">
+<div class="visit-note"><i class="fas fa-check-circle"></i> تمت مراجعة الحالة الفنية الظاهرية للمعدات وتحديد الأعمال المطلوبة لكل معدة طبقاً للموقف الفعلي.</div>
+<div class="visit-note"><i class="fas fa-sitemap"></i> جميع المعدات محل المعاينة عبارة عن ماكينات توليد كهرباء وموقفها الفني يستدعي السير في إجراءات التكهين.</div>
+<div class="visit-note"><i class="fas fa-file-signature"></i> تم الاستناد إلى التقرير الفني الصادر بشأن معدات وحدة المعدات الثابتة المتواجدة بمخازن بدر التابعة لفرع مدينة نصر.</div>
+</div>
+</div>
+<div class="committee-modern-card">
+<div class="visit-card-title"><i class="fas fa-users-gear"></i> اللجنة والمتابعة الفنية</div>
+<div class="committee-member"><div class="committee-avatar"><i class="fas fa-user-tie"></i></div><div><div class="committee-name">وحدة المعدات الثابتة</div><div class="committee-role">جهة المتابعة الفنية للمعدات</div></div></div>
+<div class="committee-member"><div class="committee-avatar"><i class="fas fa-warehouse"></i></div><div><div class="committee-name">فرع مدينة نصر</div><div class="committee-role">الجهة المالكة / المخزنية للمعدات</div></div></div>
+<div class="committee-member"><div class="committee-avatar"><i class="fas fa-tools"></i></div><div><div class="committee-name">المتابعة الفنية</div><div class="committee-role">مراجعة حالة الإصلاح والتكهين</div></div></div>
+<div class="visit-summary-strip">
+<div>مولدات: 5</div>
+<div>صرف خارجي: 159</div>
+<div>الحالة: موافق عليه</div>
+</div>
+<div class="visit-objective-box" style="margin-top:12px;background:#fff7ed;border-color:#f97316;color:#7c2d12;">
+<i class="fas fa-triangle-exclamation"></i>
+                    تم عمل صرف خارجي بالمعدات المذكورة رقم 159 بتاريخ 17 / 5 / 2026، وتمت الموافقة عليه من فرع مدينة نصر للسير في إجراءات التكهين.
+                </div>
+</div>
+</div>
+<div class="page-footer"><span>وحدة المعدات الثابتة - زيارة فرع مدينة نصر</span><span class="page-number"><i class="fas fa-route"></i> صفحة <span class="current-page">18</span> من <span class="total-pages">25</span></span></div>
+</div>
+</div>
+<!-- الصفحة 19: خلاصة معدات زيارة فرع مدينة نصر -->
+<div class="page field-visit-page">
+<div class="page-content">
+<div class="visit-header">
+<div>
+<h1><i class="fas fa-warehouse"></i> خلاصة المعدات التي تمت معاينتها - فرع مدينة نصر</h1>
+<p>ملخص فني للمولدات المتواجدة بمخازن بدر التابعة لفرع مدينة نصر</p>
+</div>
+<div class="visit-badge">خلاصة معاينة مدينة نصر</div>
+<div class="visit-date">17 / 05 / 2026</div>
+</div>
+<div class="visit-kpis">
+<div class="visit-kpi"><div><div class="label">إجمالي المعدات</div><div class="value">5</div></div><i class="fas fa-layer-group"></i></div>
+<div class="visit-kpi"><div><div class="label">قدرات مختلفة</div><div class="value">30-100</div></div><i class="fas fa-gauge-high"></i></div>
+<div class="visit-kpi"><div><div class="label">سنوات الصنع</div><div class="value">1982-2010</div></div><i class="fas fa-calendar-days"></i></div>
+<div class="visit-kpi"><div><div class="label">إجراء مقترح</div><div class="value" style="font-size:22px;">تكهين</div></div><i class="fas fa-recycle"></i></div>
+</div>
+<div class="visit-category-card" style="height:auto;">
+<div class="visit-category-title"><div><i class="fas fa-bolt"></i> ماكينات توليد كهرباء محل المعاينة</div><span>5 معدات</span></div>
+<table class="visit-equipment-table" style="font-size:11px;">
+<thead>
+<tr>
+<th style="width:34px;">م</th>
+<th style="width:120px;">كود المعدة</th>
+<th style="width:70px;">القدرة</th>
+<th style="width:75px;">سنة الصنع</th>
+<th>الموقف الفني الحالي</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>1</td><td class="ltr">27 / 2 / 2250</td><td>30</td><td>2009</td><td>عمرة محرك - تجديد شامل للكابينة - شاشة - دائرة حماية - سلكونات.</td></tr>
+<tr><td>2</td><td class="ltr">27 / 2 / 650</td><td>80</td><td>1982</td><td>عمرة محرك - ردياتير كامل - ضفيرة كاملة - عدادات - دائرة حماية.</td></tr>
+<tr><td>3</td><td class="ltr">27 / 2 / 1247</td><td>100</td><td>2009</td><td>عمرة محرك - ردياتير كامل - ضفيرة كاملة - عدادات - دائرة حماية.</td></tr>
+<tr><td>4</td><td class="ltr">27 / 2 / 2253</td><td>50</td><td>2010</td><td>عمرة محرك - ردياتير كامل - ضفيرة كاملة - عدادات - دائرة حماية.</td></tr>
+<tr><td>5</td><td class="ltr">27 / 2 / 2261</td><td>50</td><td>2009</td><td>عمرة محرك - تجديد شامل للكابينة - شاشة - دائرة حماية - سلكونات.</td></tr>
+</tbody>
+</table>
+</div>
+<div style="display:grid;grid-template-columns:1.1fr .9fr;gap:10px;margin-top:10px;">
+<div class="visit-objective-box" style="margin:0;">
+<i class="fas fa-clipboard-list"></i>
+                الخلاصة الفنية: نظراً للحالة الفنية السيئة للمعدات وارتفاع تكلفة الإصلاح وعدم وجود جدوى اقتصادية من الإصلاح، يتم السير في إجراءات التكهين طبقاً للإجراءات المتبعة.
+            </div>
+<div class="visit-action-note" style="margin:0;align-items:center;">
+<i class="fas fa-file-circle-check"></i>
+<div>ملحوظة ظاهرة: تم عمل صرف خارجي بالمعدات المذكورة رقم 159 بتاريخ 17 / 5 / 2026، وتمت الموافقة عليه من فرع مدينة نصر للسير في إجراءات التكهين.</div>
+</div>
+</div>
+<div style="margin-top:9px;background:#eef4fb;border:1px solid #cbd5e1;border-radius:10px;padding:9px 11px;font-size:12px;font-weight:900;color:#1a2a6c;line-height:1.7;">
+<i class="fas fa-check-double" style="color:#fdbb2d;"></i>
+            التوصية: حفظ الموقف ضمن ملف متابعة المعدات غير الاقتصادية، ومتابعة استكمال إجراءات التكهين مع فرع مدينة نصر طبقاً لأمر الصرف الخارجي المعتمد.
+        </div>
+<div class="page-footer"><span>وحدة المعدات الثابتة - خلاصة معاينة فرع مدينة نصر</span><span class="page-number"><i class="fas fa-warehouse"></i> صفحة <span class="current-page">19</span> من <span class="total-pages">25</span></span></div>
+</div>
+</div>
+<!-- الصفحة 20: رفع كفاءة مولد 60 ك.ف.أ (قبل الإصلاح - 1) -->
+<div class="page">
+<div class="page-content">
+<div class="header-main" style="background: linear-gradient(135deg, #c0392b, #e74c3c); color: white; padding: 12px 20px; border-radius: 10px; margin-bottom: 12px;">
+<div style="display: flex; align-items: center; gap: 15px;">
+<i class="fas fa-bolt" style="font-size: 30px;"></i>
+<div>
+<h1 style="margin:0; font-size: 24px;">رفع كفاءة مولد قدرة 60 ك.ف.أ</h1>
+<span style="font-size: 14px; opacity: 0.9;">موديل 1982 - إدارة ترسانة المعصرة (قبل الإصلاح)</span>
+</div>
+</div>
+</div>
+<div class="project-info">
+<div class="project-info-item">
+<div class="project-info-label">كود المولد</div>
+<div class="project-info-value">27/02/669</div>
+</div>
+<div class="project-info-item">
+<div class="project-info-label">الحالة</div>
+<div><span class="status-badge status-before"><i class="fas fa-times-circle"></i> قبل الإصلاح</span></div>
+</div>
+<div class="project-info-item">
+<div class="project-info-label">ماركة المولد</div>
+<div class="project-info-value">VOLVO</div>
+</div>
+</div>
+<div class="image-grid-2">
+<div class="image-card">
+<div class="image-title">
+<i class="fas fa-exclamation-triangle" style="color: #e74c3c;"></i>
+<span>الصورة رقم (1) - الوضع قبل الإصلاح</span>
+</div>
+<div class="image-container">
+<img onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'300\' height=\'200\' viewBox=\'0 0 300 200\'%3E%3Crect width=\'300\' height=\'200\' fill=\'%23f0f0f0\'/%3E%3Ctext x=\'150\' y=\'115\' font-family=\'Cairo\' font-size=\'16\' fill=\'%23999\' text-anchor=\'middle\'%3Eصورة قبل الإصلاح (1)%3C/text%3E%3C/svg%3E'" src="1.png"/>
+</div>
+</div>
+<div class="image-card">
+<div class="image-title">
+<i class="fas fa-exclamation-triangle" style="color: #e74c3c;"></i>
+<span>الصورة رقم (2) - الوضع قبل الإصلاح</span>
+</div>
+<div class="image-container">
+<img onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'300\' height=\'200\' viewBox=\'0 0 300 200\'%3E%3Crect width=\'300\' height=\'200\' fill=\'%23f0f0f0\'/%3E%3Ctext x=\'150\' y=\'115\' font-family=\'Cairo\' font-size=\'16\' fill=\'%23999\' text-anchor=\'middle\'%3Eصورة قبل الإصلاح (2)%3C/text%3E%3C/svg%3E'" src="2.png"/>
+</div>
+</div>
+</div>
+<div class="page-footer">
+<span></span>
+<span class="page-number"><i class="fas fa-image"></i> صفحة <span class="current-page">20</span> من <span class="total-pages">25</span></span>
+</div>
+</div>
+</div>
+<!-- الصفحة 21: رفع كفاءة مولد 60 ك.ف.أ (قبل الإصلاح - 2) -->
+<div class="page">
+<div class="page-content">
+<div class="header-main" style="background: linear-gradient(135deg, #c0392b, #e74c3c); color: white; padding: 12px 20px; border-radius: 10px; margin-bottom: 12px;">
+<div style="display: flex; align-items: center; gap: 15px;">
+<i class="fas fa-bolt" style="font-size: 30px;"></i>
+<div>
+<h1 style="margin:0; font-size: 24px;">رفع كفاءة مولد قدرة 60 ك.ف.أ</h1>
+<span style="font-size: 14px; opacity: 0.9;">موديل 1982 - إدارة ترسانة المعصرة (قبل الإصلاح)</span>
+</div>
+</div>
+</div>
+<div class="project-info">
+<div class="project-info-item">
+<div class="project-info-label">كود المولد</div>
+<div class="project-info-value">27/02/669</div>
+</div>
+<div class="project-info-item">
+<div class="project-info-label">الحالة</div>
+<div><span class="status-badge status-before"><i class="fas fa-times-circle"></i> قبل الإصلاح</span></div>
+</div>
+<div class="project-info-item">
+<div class="project-info-label">ماركة المولد</div>
+<div class="project-info-value">VOLVO</div>
+</div>
+</div>
+<div class="image-grid-2">
+<div class="image-card">
+<div class="image-title">
+<i class="fas fa-exclamation-triangle" style="color: #e74c3c;"></i>
+<span>الصورة رقم (3) - الوضع قبل الإصلاح</span>
+</div>
+<div class="image-container">
+<img onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'300\' height=\'200\' viewBox=\'0 0 300 200\'%3E%3Crect width=\'300\' height=\'200\' fill=\'%23f0f0f0\'/%3E%3Ctext x=\'150\' y=\'115\' font-family=\'Cairo\' font-size=\'16\' fill=\'%23999\' text-anchor=\'middle\'%3Eصورة قبل الإصلاح (3)%3C/text%3E%3C/svg%3E'" src="3.png"/>
+</div>
+</div>
+<div class="image-card">
+<div class="image-title">
+<i class="fas fa-exclamation-triangle" style="color: #e74c3c;"></i>
+<span>الصورة رقم (4) - الوضع قبل الإصلاح</span>
+</div>
+<div class="image-container">
+<img onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'300\' height=\'200\' viewBox=\'0 0 300 200\'%3E%3Crect width=\'300\' height=\'200\' fill=\'%23f0f0f0\'/%3E%3Ctext x=\'150\' y=\'115\' font-family=\'Cairo\' font-size=\'16\' fill=\'%23999\' text-anchor=\'middle\'%3Eصورة قبل الإصلاح (4)%3C/text%3E%3C/svg%3E'" src="4.png"/>
+</div>
+</div>
+</div>
+<div class="page-footer">
+<span></span>
+<span class="page-number"><i class="fas fa-image"></i> صفحة <span class="current-page">21</span> من <span class="total-pages">25</span></span>
+</div>
+</div>
+</div>
+<!-- الصفحة 22: رفع كفاءة مولد 60 ك.ف.أ (بعد الإصلاح - 1) -->
+<div class="page">
+<div class="page-content">
+<div class="header-main" style="background: linear-gradient(135deg, #27ae60, #2ecc71); color: white; padding: 12px 20px; border-radius: 10px; margin-bottom: 12px;">
+<div style="display: flex; align-items: center; gap: 15px;">
+<i class="fas fa-check-circle" style="font-size: 30px;"></i>
+<div>
+<h1 style="margin:0; font-size: 24px;">رفع كفاءة مولد قدرة 60 ك.ف.أ</h1>
+<span style="font-size: 14px; opacity: 0.9;">موديل 1982 - إدارة ترسانة المعصرة (بعد الإصلاح)</span>
+</div>
+</div>
+</div>
+<div class="project-info">
+<div class="project-info-item">
+<div class="project-info-label">كود المولد</div>
+<div class="project-info-value">27/02/669</div>
+</div>
+<div class="project-info-item">
+<div class="project-info-label">الحالة</div>
+<div><span class="status-badge status-after"><i class="fas fa-check-circle"></i> بعد الإصلاح</span></div>
+</div>
+<div class="project-info-item">
+<div class="project-info-label">ماركة المولد</div>
+<div class="project-info-value">VOLVO</div>
+</div>
+</div>
+<div class="image-grid-2">
+<div class="image-card">
+<div class="image-title">
+<i class="fas fa-check-circle" style="color: #27ae60;"></i>
+<span>الصورة رقم (1) - الوضع بعد الإصلاح</span>
+</div>
+<div class="image-container">
+<img onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'300\' height=\'200\' viewBox=\'0 0 300 200\'%3E%3Crect width=\'300\' height=\'200\' fill=\'%23f0f0f0\'/%3E%3Ctext x=\'150\' y=\'115\' font-family=\'Cairo\' font-size=\'16\' fill=\'%23999\' text-anchor=\'middle\'%3Eصورة بعد الإصلاح (1)%3C/text%3E%3C/svg%3E'" src="5.png"/>
+</div>
+</div>
+<div class="image-card">
+<div class="image-title">
+<i class="fas fa-check-circle" style="color: #27ae60;"></i>
+<span>الصورة رقم (2) - الوضع بعد الإصلاح</span>
+</div>
+<div class="image-container">
+<img onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'300\' height=\'200\' viewBox=\'0 0 300 200\'%3E%3Crect width=\'300\' height=\'200\' fill=\'%23f0f0f0\'/%3E%3Ctext x=\'150\' y=\'115\' font-family=\'Cairo\' font-size=\'16\' fill=\'%23999\' text-anchor=\'middle\'%3Eصورة بعد الإصلاح (2)%3C/text%3E%3C/svg%3E'" src="6.png"/>
+</div>
+</div>
+</div>
+<div class="page-footer">
+<span></span>
+<span class="page-number"><i class="fas fa-image"></i> صفحة <span class="current-page">22</span> من <span class="total-pages">25</span></span>
+</div>
+</div>
+</div>
+<!-- الصفحة 23: رفع كفاءة مولد 60 ك.ف.أ (بعد الإصلاح - 2) -->
+<div class="page">
+<div class="page-content">
+<div class="header-main" style="background: linear-gradient(135deg, #27ae60, #2ecc71); color: white; padding: 12px 20px; border-radius: 10px; margin-bottom: 12px;">
+<div style="display: flex; align-items: center; gap: 15px;">
+<i class="fas fa-check-circle" style="font-size: 30px;"></i>
+<div>
+<h1 style="margin:0; font-size: 24px;">رفع كفاءة مولد قدرة 60 ك.ف.أ</h1>
+<span style="font-size: 14px; opacity: 0.9;">موديل 1982 - إدارة ترسانة المعصرة (بعد الإصلاح)</span>
+</div>
+</div>
+</div>
+<div class="project-info">
+<div class="project-info-item">
+<div class="project-info-label">كود المولد</div>
+<div class="project-info-value">27/02/669</div>
+</div>
+<div class="project-info-item">
+<div class="project-info-label">الحالة</div>
+<div><span class="status-badge status-after"><i class="fas fa-check-circle"></i> بعد الإصلاح</span></div>
+</div>
+<div class="project-info-item">
+<div class="project-info-label">ماركة المولد</div>
+<div class="project-info-value">VOLVO</div>
+</div>
+</div>
+<div class="image-grid-2">
+<div class="image-card">
+<div class="image-title">
+<i class="fas fa-check-circle" style="color: #27ae60;"></i>
+<span>الصورة رقم (3) - الوضع بعد الإصلاح</span>
+</div>
+<div class="image-container">
+<img onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'300\' height=\'200\' viewBox=\'0 0 300 200\'%3E%3Crect width=\'300\' height=\'200\' fill=\'%23f0f0f0\'/%3E%3Ctext x=\'150\' y=\'115\' font-family=\'Cairo\' font-size=\'16\' fill=\'%23999\' text-anchor=\'middle\'%3Eصورة بعد الإصلاح (3)%3C/text%3E%3C/svg%3E'" src="7.png"/>
+</div>
+</div>
+<div class="image-card">
+<div class="image-title">
+<i class="fas fa-check-circle" style="color: #27ae60;"></i>
+<span>الصورة رقم (4) - الوضع بعد الإصلاح</span>
+</div>
+<div class="image-container">
+<img onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'300\' height=\'200\' viewBox=\'0 0 300 200\'%3E%3Crect width=\'300\' height=\'200\' fill=\'%23f0f0f0\'/%3E%3Ctext x=\'150\' y=\'115\' font-family=\'Cairo\' font-size=\'16\' fill=\'%23999\' text-anchor=\'middle\'%3Eصورة بعد الإصلاح (4)%3C/text%3E%3C/svg%3E'" src="8.png"/>
+</div>
+</div>
+</div>
+<div class="page-footer">
+<span></span>
+<span class="page-number"><i class="fas fa-image"></i> صفحة <span class="current-page">23</span> من <span class="total-pages">25</span></span>
+</div>
+</div>
+</div>
+<!-- الصفحة 24: قراءات الاختبارات والتحميل -->
+<div class="page">
+<div class="page-content">
+<div class="header-main" style="background: linear-gradient(135deg, #8e44ad, #9b59b6); color: white; padding: 12px 20px; border-radius: 10px; margin-bottom: 12px;">
+<div style="display: flex; align-items: center; gap: 15px;">
+<i class="fas fa-flask" style="font-size: 30px;"></i>
+<div>
+<h1 style="margin:0; font-size: 24px;">قراءات الاختبارات والتحميل</h1>
+<span style="font-size: 14px; opacity: 0.9;">نتائج اختبارات المولد بعد الإصلاح - إدارة ترسانة المعصرة</span>
+</div>
+</div>
+</div>
+<div class="image-grid-2" style="margin-bottom: 15px;">
+<div class="image-card">
+<div class="image-title">
+<i class="fas fa-chart-line" style="color: var(--ac-yellow);"></i>
+<span>قراءة الاختبارات 1</span>
+</div>
+<div class="image-container" style="min-height: 200px;">
+<img alt="اختبار التحميل" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'300\' height=\'200\' viewBox=\'0 0 300 200\'%3E%3Crect width=\'300\' height=\'200\' fill=\'%23f0f0f0\'/%3E%3Ctext x=\'150\' y=\'115\' font-family=\'Cairo\' font-size=\'16\' fill=\'%23999\' text-anchor=\'middle\'%3Eمنحنى أداء التحميل%3C/text%3E%3C/svg%3E'" src="9.png"/>
+</div>
+</div>
+<div class="image-card">
+<div class="image-title">
+<i class="fas fa-table" style="color: var(--ac-yellow);"></i>
+<span>قراءات الاختبارات 2</span>
+</div>
+<div class="image-container" style="min-height: 200px;">
+<img alt="قراءات الاختبارات" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'300\' height=\'200\' viewBox=\'0 0 300 200\'%3E%3Crect width=\'300\' height=\'200\' fill=\'%23f0f0f0\'/%3E%3Ctext x=\'150\' y=\'115\' font-family=\'Cairo\' font-size=\'16\' fill=\'%23999\' text-anchor=\'middle\'%3Eقراءات الاختبارات%3C/text%3E%3C/svg%3E'" src="10.png"/>
+</div>
+</div>
+</div>
+<!-- جدول نتائج الاختبارات -->
+<div class="test-card">
+<div style="display: flex; gap: 10px; margin-top: 10px;">
+<div style="flex: 1; background: #27ae60; color: white; padding: 8px; border-radius: 8px; text-align: center;">
+<i class="fas fa-check-circle"></i> اختبار التحميل: ناجح
+                </div>
+<div style="flex: 1; background: #f39c12; color: white; padding: 8px; border-radius: 8px; text-align: center;">
+<i class="fas fa-bolt"></i> استقرار الجهد: ممتاز
+                </div>
+<div style="flex: 1; background: #3498db; color: white; padding: 8px; border-radius: 8px; text-align: center;">
+<i class="fas fa-thermometer-half"></i> درجة الحرارة: طبيعية
+                </div>
+</div>
+</div>
+<div class="page-footer">
+<span></span>
+<span class="page-number"><i class="fas fa-flask"></i> صفحة <span class="current-page">24</span> من <span class="total-pages">25</span></span>
+</div>
+</div>
+</div>
+<!-- الصفحة 25: صورة ختامية -->
+<div class="page" style="background:#ffffff;">
+<div class="page-content" style="
+        padding:0;
+        margin:25px;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        overflow:hidden;
+        height:100%;
+    ">
+<img alt="خاتمة التقرير" onerror="this.onerror=null;
+             this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%221200%22 height=%22800%22 viewBox=%220 0 1200 800%22%3E%3Crect width=%221200%22 height=%22800%22 fill=%22%23f5f5f5%22/%3E%3Ctext x=%22600%22 y=%22400%22 font-size=%2240%22 text-anchor=%22middle%22 fill=%22%23999%22 font-family=%22Cairo%22%3Eend.png غير موجود%3C/text%3E%3C/svg%3E';" src="./img/end.png" style="
+                width:100%;
+                height:100%;
+                object-fit:fill;
+                display:block;
+             "/>
+            
+</div>
+<div class="page-footer">
+<span></span>
+<span class="page-number"><i class="fas fa-image"></i> صفحة <span class="current-page">25</span> من <span class="total-pages">25</span></span>
+</div> 
+</div>
+
+<!-- ==================== سكربتات الشارتات - نسخة مصححة ==================== -->
+<script>
+(function () {
+    'use strict';
+
+    const chartInstances = {};
+
+    function waitForChart(callback) {
+        let tries = 0;
+        const timer = setInterval(function () {
+            tries++;
+            if (typeof Chart !== 'undefined') {
+                clearInterval(timer);
+                callback();
+            }
+            if (tries > 80) {
+                clearInterval(timer);
+                console.error('Chart.js لم يتم تحميله. تأكد من الاتصال بالإنترنت أو ضع مكتبة Chart.js محلياً.');
+            }
+        }, 50);
+    }
+
+    function getCanvas(id) {
+        const canvas = document.getElementById(id);
+        if (!canvas) return null;
+        const parent = canvas.parentElement;
+        if (parent) {
+            if (!parent.style.position) parent.style.position = 'relative';
+            if (!parent.style.minHeight) parent.style.minHeight = parent.classList.contains('compressor-chart-holder') ? '310px' : '160px';
+        }
+        canvas.style.width = '100%';
+        canvas.style.height = '100%';
+        return canvas;
+    }
+
+    function makeChart(id, config) {
+        const canvas = getCanvas(id);
+        if (!canvas || typeof Chart === 'undefined') return;
+        if (chartInstances[id]) chartInstances[id].destroy();
+        if (Chart.getChart(canvas)) Chart.getChart(canvas).destroy();
+        chartInstances[id] = new Chart(canvas.getContext('2d'), config);
+    }
+
+    function moneyTick(value) {
+        const n = Number(value) || 0;
+        if (Math.abs(n) >= 1000000) return (n / 1000000).toFixed(1) + ' م';
+        if (Math.abs(n) >= 1000) return (n / 1000).toFixed(0) + ' ألف';
+        return n.toLocaleString('ar-EG');
+    }
+
+    function commonOptions(extra) {
+        return Object.assign({
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: false,
+            resizeDelay: 200,
+            layout: { padding: 6 },
+            plugins: {
+                legend: { labels: { font: { family: 'Cairo', size: 10 } } },
+                tooltip: {
+                    rtl: true,
+                    textDirection: 'rtl',
+                    titleFont: { family: 'Cairo' },
+                    bodyFont: { family: 'Cairo' }
+                },
+                datalabels: { display: false }
+            }
+        }, extra || {});
+    }
+
+    function createLineChart(id, labels, data, color) {
+        makeChart(id, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'القيمة',
+                    data: data,
+                    borderColor: color,
+                    backgroundColor: color + '22',
+                    fill: true,
+                    tension: 0.35,
+                    borderWidth: 2,
+                    pointRadius: 3,
+                    pointHoverRadius: 5
+                }]
+            },
+            options: commonOptions({
+                plugins: { legend: { display: false }, datalabels: { display: false } },
+                scales: {
+                    y: { beginAtZero: false, ticks: { callback: moneyTick, font: { family: 'Cairo', size: 8 } } },
+                    x: { ticks: { font: { family: 'Cairo', size: 9 } } }
+                }
+            })
+        });
+    }
+
+    function costChart(id, direct, indirect) {
+        makeChart(id, {
+            type: 'bar',
+            data: {
+                labels: ['مواد', 'مصروفات', 'أجور'],
+                datasets: [
+                    { label: 'مباشر', data: direct, backgroundColor: '#1a2a6c', borderRadius: 5 },
+                    { label: 'غير مباشر', data: indirect, backgroundColor: '#e74c3c', borderRadius: 5 }
+                ]
+            },
+            options: commonOptions({
+                plugins: { legend: { position: 'bottom', labels: { font: { family: 'Cairo', size: 8 } } }, datalabels: { display: false } },
+                scales: {
+                    y: { beginAtZero: true, ticks: { callback: moneyTick, font: { family: 'Cairo', size: 8 } } },
+                    x: { ticks: { font: { family: 'Cairo', size: 9 } } }
+                }
+            })
+        });
+    }
+
+    function initAllCharts() {
+        Chart.defaults.font.family = 'Cairo';
+        Chart.defaults.color = '#1f2937';
+        if (window.ChartDataLabels && !Chart.registry.plugins.get('datalabels')) {
+            Chart.register(ChartDataLabels);
+        }
+        if (Chart.defaults.plugins && Chart.defaults.plugins.datalabels) {
+            Chart.defaults.plugins.datalabels.display = false;
+        }
+
+        makeChart('periodChart', {
+            type: 'bar',
+            data: {
+                labels: ['قطاع القاهرة الكبرى', 'قطاع وجه بحري', 'قطاع وجه قبلي'],
+                datasets: [
+                    { label: 'من 2025/07/01 إلى 2025/09/30', data: [31185727, 11600053, 2133460], backgroundColor: '#121212', borderRadius: 6 },
+                    { label: 'من 2025/10/01 إلى 2025/12/31', data: [28214092, 11762640, 2152516], backgroundColor: '#FFD700', borderRadius: 6 },
+                    { label: 'من 2026/01/01 إلى 2026/03/31', data: [26747693, 10628558, 1960506], backgroundColor: '#34e89e', borderRadius: 6 }
+                ]
+            },
+            options: commonOptions({
+                plugins: { legend: { position: 'top', labels: { font: { family: 'Cairo', size: 10 } } }, datalabels: { display: false } },
+                scales: {
+                    y: { beginAtZero: true, ticks: { callback: moneyTick, font: { family: 'Cairo', size: 8 } } },
+                    x: { ticks: { font: { family: 'Cairo', size: 9 } } }
+                }
+            })
+        });
+
+        makeChart('trendChart', {
+            type: 'line',
+            data: {
+                labels: ['يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر', 'يناير', 'فبراير', 'مارس'],
+                datasets: [{
+                    label: 'صافي الإيراد الشهري',
+                    data: [14877492, 15420407, 14621341, 14165732, 13709505, 14254011, 14388266, 13161469, 11787022],
+                    borderColor: '#121212',
+                    backgroundColor: 'rgba(255, 215, 0, 0.20)',
+                    fill: true,
+                    tension: 0.4,
+                    borderWidth: 3,
+                    pointRadius: 4
+                }]
+            },
+            options: commonOptions({
+                plugins: { legend: { display: false }, datalabels: { display: false } },
+                scales: {
+                    y: { ticks: { callback: moneyTick, font: { family: 'Cairo', size: 8 } } },
+                    x: { ticks: { font: { family: 'Cairo', size: 9 } } }
+                }
+            })
+        });
+
+        makeChart('pieChart', {
+            type: 'doughnut',
+            data: {
+                labels: ['القاهرة', 'بحري', 'قبلي'],
+                datasets: [{ data: [86147693, 33988558, 6245506], backgroundColor: ['#121212', '#FFD700', '#cccccc'], borderWidth: 3 }]
+            },
+            options: commonOptions({
+                cutout: '58%',
+                plugins: { legend: { position: 'bottom', labels: { font: { family: 'Cairo', size: 10 } } }, datalabels: { display: false } }
+            })
+        });
+
+        createLineChart('chartCairoRevQ3', ['يوليو', 'أغسطس', 'سبتمبر'], [10269532, 10839149, 10077046], '#1a2a6c');
+        createLineChart('chartBahriRevQ3', ['يوليو', 'أغسطس', 'سبتمبر'], [3910175, 3841123, 3848755], '#34e89e');
+        createLineChart('chartQebliRevQ3', ['يوليو', 'أغسطس', 'سبتمبر'], [697785, 740135, 695540], '#fdbb2d');
+
+        costChart('chartCairoCost', [1673036, 4583408, 1796517], [172751, 121420, 983205]);
+        costChart('chartBahriCost', [145043, 386813, 787591], [48319, 33962, 459000]);
+        costChart('chartQebliCost', [117447, 0, 880297], [42980, 30209, 468531]);
+
+        createLineChart('chartCairoRevQ4', ['أكتوبر', 'نوفمبر', 'ديسمبر'], [9492991, 9253926, 9467175], '#1a2a6c');
+        createLineChart('chartBahriRevQ4', ['أكتوبر', 'نوفمبر', 'ديسمبر'], [3963081, 3730691, 4068868], '#34e89e');
+        createLineChart('chartQebliRevQ4', ['أكتوبر', 'نوفمبر', 'ديسمبر'], [709660, 724888, 717968], '#fdbb2d');
+
+        createLineChart('chartCairoRevQ1_2026', ['يناير', 'فبراير', 'مارس'], [9980550, 9073275, 7693868], '#1a2a6c');
+        createLineChart('chartBahriRevQ1_2026', ['يناير', 'فبراير', 'مارس'], [3751760, 3460294, 3416504], '#34e89e');
+        createLineChart('chartQebliRevQ1_2026', ['يناير', 'فبراير', 'مارس'], [655956, 627900, 676650], '#fdbb2d');
+
+        makeChart('comparisonProfitChart', {
+            type: 'bar',
+            data: {
+                labels: ['القاهرة', 'وجه بحري', 'وجه قبلي'],
+                datasets: [
+                    { label: 'الإيرادات', data: [31185727, 11600053, 2133460], backgroundColor: '#1a2a6c', borderRadius: 5 },
+                    { label: 'المصروفات', data: [9330339, 1860731, 1632698], backgroundColor: '#e74c3c', borderRadius: 5 },
+                    { label: 'صافي الربح', data: [21855388, 9739322, 500762], backgroundColor: '#27ae60', borderRadius: 5 }
+                ]
+            },
+            options: commonOptions({
+                plugins: { legend: { position: 'bottom', labels: { font: { family: 'Cairo', size: 9 } } }, datalabels: { display: false } },
+                scales: {
+                    y: { beginAtZero: true, ticks: { callback: moneyTick, font: { family: 'Cairo', size: 8 } } },
+                    x: { ticks: { font: { family: 'Cairo', size: 9 } } }
+                }
+            })
+        });
+
+        const locationLabels = ['فرع الاسكندرية', 'ادارة الكبارى', 'الخط الرابع', 'فرع حلوان', 'صيانة القصور', 'فرع مدينة نصر', 'فرع جنوب الوادى', 'فرع شمال الدلتا', 'فرع سيناء', 'فرع القاهرة', 'تاجير المعدات', 'فرع القناه', 'شرق و وسط الدلتا', 'فرع اسيوط', 'ادارة الانفاق', 'ادارة الانشاءات البحرية', 'المشروعات طموه', 'الاساسات', 'المنشاءات المتميزة', 'ترسانة المعصرة'];
+        const activeData = [5, 7, 2, 1, 4, 3, 1, 2, 2, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0];
+        const stoppedData = [4, 6, 0, 1, 0, 0, 1, 0, 0, 0, 2, 1, 1, 0, 0, 6, 3, 1, 1, 1];
+
+        makeChart('compressorLocationAnalysisChart', {
+            type: 'bar',
+            data: {
+                labels: locationLabels,
+                datasets: [
+                    { label: 'عدد المعدات العاملة', data: activeData, backgroundColor: '#16a34a', borderRadius: 5, barThickness: 13 },
+                    { label: 'عدد المعطل والتكهين', data: stoppedData, backgroundColor: '#ea580c', borderRadius: 5, barThickness: 13 }
+                ]
+            },
+            options: commonOptions({
+                indexAxis: 'y',
+                layout: { padding: { top: 4, right: 6, bottom: 4, left: 6 } },
+                plugins: {
+                    legend: { position: 'top', labels: { font: { family: 'Cairo', size: 10 } } },
+                    datalabels: {
+                        display: true,
+                        color: '#ffffff',
+                        anchor: 'center',
+                        align: 'center',
+                        clamp: true,
+                        font: { weight: '900', family: 'Cairo', size: 9 },
+                        formatter: function (v) { return v > 0 ? v : ''; }
+                    }
+                },
+                scales: {
+                    x: { stacked: true, beginAtZero: true, grid: { color: '#f1f5f9' }, ticks: { precision: 0, font: { family: 'Cairo', size: 9 } } },
+                    y: { stacked: true, grid: { display: false }, ticks: { autoSkip: false, font: { family: 'Cairo', size: 8, weight: 'bold' } } }
+                }
+            })
+        });
+
+        makeChart('compressorStatusPieChart', {
+            type: 'doughnut',
+            data: {
+                labels: ['تعمل بكفاءة', 'معطلة بالورش', 'تحت التكهين'],
+                datasets: [{ data: [33, 17, 11], backgroundColor: ['#16a34a', '#ea580c', '#dc2626'], borderColor: '#ffffff', borderWidth: 3 }]
+            },
+            options: commonOptions({
+                cutout: '54%',
+                plugins: {
+                    legend: { position: 'bottom', labels: { font: { family: 'Cairo', size: 10 }, boxWidth: 12 } },
+                    datalabels: {
+                        display: true,
+                        color: '#ffffff',
+                        font: { weight: '900', family: 'Cairo', size: 11 },
+                        formatter: function (value, ctx) {
+                            const sum = ctx.chart.data.datasets[0].data.reduce(function (a, b) { return a + b; }, 0);
+                            return value + '\n' + (value * 100 / sum).toFixed(1) + '%';
+                        }
+                    }
+                }
+            })
+        });
+    }
+
+    function start() {
+        waitForChart(function () {
+            initAllCharts();
+            setTimeout(function () {
+                Object.values(chartInstances).forEach(function (ch) { ch.resize(); });
+            }, 300);
+        });
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', start);
+    } else {
+        start();
+    }
+})();
+</script>
+
+<script>
+(function () {
+    'use strict';
+
+    var slides = [];
+    var currentIndex = 0;
+    var isPlaying = false;
+    var duration = 10000;
+    var timerId = null;
+    var progressId = null;
+    var startedAt = 0;
+    var controlsHideTimer = null;
+
+    function qs(id) { return document.getElementById(id); }
+
+    function collectSlides() {
+        slides = Array.prototype.slice.call(document.querySelectorAll('body > .page, body > .cover-page-new'));
+        slides.forEach(function (slide, index) {
+            slide.classList.add('presentation-slide');
+            slide.setAttribute('data-slide-index', String(index + 1));
+        });
+    }
+
+    function updateScale() {
+        if (!slides.length) return;
+        var active = slides[currentIndex] || slides[0];
+        var oldDisplay = active.style.display;
+        var wasActive = active.classList.contains('active-slide');
+        if (!wasActive) {
+            active.style.display = 'flex';
+        }
+        var slideW = active.offsetWidth || 1123;
+        var slideH = active.offsetHeight || 794;
+        active.style.display = oldDisplay;
+
+        /* تكبير مساحة السلايد لأقصى حد آمن داخل الشاشة مع ترك مساحة صغيرة للتحكم */
+        var toolbarReserve = window.innerWidth <= 768 ? 54 : 30;
+        var maxW = Math.max(320, window.innerWidth - 8);
+        var maxH = Math.max(260, window.innerHeight - toolbarReserve - 8);
+        var scale = Math.min(maxW / slideW, maxH / slideH, 1.35);
+        document.documentElement.style.setProperty('--slide-scale', String(Math.max(scale, 0.24)));
+    }
+
+    function resizeCharts() {
+        setTimeout(function () {
+            if (window.Chart && Chart.instances) {
+                Object.keys(Chart.instances).forEach(function (key) {
+                    if (Chart.instances[key] && Chart.instances[key].resize) Chart.instances[key].resize();
+                });
+            }
+            window.dispatchEvent(new Event('resize'));
+        }, 120);
+    }
+
+    function setProgress(percent) {
+        var bar = qs('presentationProgressBar');
+        if (bar) bar.style.width = Math.max(0, Math.min(100, percent)) + '%';
+    }
+
+    function updateCounter() {
+        var counter = qs('slideCounter');
+        if (counter) counter.textContent = (currentIndex + 1) + ' / ' + slides.length;
+    }
+
+    function showSlide(index, keepProgress) {
+        if (!slides.length) return;
+        currentIndex = (index + slides.length) % slides.length;
+        slides.forEach(function (slide, i) {
+            slide.classList.toggle('active-slide', i === currentIndex);
+        });
+        updateScale();
+        updateCounter();
+        resizeCharts();
+        if (!keepProgress) resetProgress();
+    }
+
+    function resetProgress() {
+        setProgress(0);
+        startedAt = Date.now();
+    }
+
+    function nextSlide() { showSlide(currentIndex + 1); }
+    function prevSlide() { showSlide(currentIndex - 1); }
+    function firstSlide() { showSlide(0); }
+    function lastSlide() { showSlide(slides.length - 1); }
+
+    function stopTimers() {
+        if (timerId) clearTimeout(timerId);
+        if (progressId) cancelAnimationFrame(progressId);
+        timerId = null;
+        progressId = null;
+    }
+
+    function progressLoop() {
+        if (!isPlaying) return;
+        var elapsed = Date.now() - startedAt;
+        setProgress((elapsed / duration) * 100);
+        progressId = requestAnimationFrame(progressLoop);
+    }
+
+    function scheduleNext() {
+        stopTimers();
+        resetProgress();
+        progressLoop();
+        timerId = setTimeout(function () {
+            nextSlide();
+            if (isPlaying) scheduleNext();
+        }, duration);
+    }
+
+    function setPlayButton() {
+        var btn = qs('playPauseBtn');
+        if (!btn) return;
+        btn.classList.toggle('play-btn', !isPlaying);
+        btn.classList.toggle('pause-btn', isPlaying);
+        btn.innerHTML = isPlaying
+            ? '<i class="fas fa-pause"></i><span class="btn-text">إيقاف</span>'
+            : '<i class="fas fa-play"></i><span class="btn-text">تشغيل</span>';
+    }
+
+    function requestFullScreen() {
+        var el = document.documentElement;
+        if (!document.fullscreenElement && el.requestFullscreen) {
+            el.requestFullscreen().catch(function () {});
+        }
+    }
+
+    function play() {
+        if (isPlaying) return;
+        isPlaying = true;
+        setPlayButton();
+        requestFullScreen();
+        scheduleNext();
+    }
+
+    function pause() {
+        isPlaying = false;
+        stopTimers();
+        setProgress(0);
+        setPlayButton();
+    }
+
+    function togglePlay() { isPlaying ? pause() : play(); }
+
+    function bindControls() {
+        qs('playPauseBtn').addEventListener('click', togglePlay);
+        qs('nextSlideBtn').addEventListener('click', function () { nextSlide(); if (isPlaying) scheduleNext(); });
+        qs('prevSlideBtn').addEventListener('click', function () { prevSlide(); if (isPlaying) scheduleNext(); });
+        qs('firstSlideBtn').addEventListener('click', function () { firstSlide(); if (isPlaying) scheduleNext(); });
+        qs('lastSlideBtn').addEventListener('click', function () { lastSlide(); if (isPlaying) scheduleNext(); });
+        qs('fullscreenBtn').addEventListener('click', function () {
+            if (document.fullscreenElement && document.exitFullscreen) document.exitFullscreen();
+            else requestFullScreen();
+        });
+        qs('slideDuration').addEventListener('change', function (e) {
+            duration = parseInt(e.target.value, 10) || 10000;
+            if (isPlaying) scheduleNext();
+        });
+
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'ArrowLeft' || e.key === 'PageDown') { nextSlide(); if (isPlaying) scheduleNext(); }
+            if (e.key === 'ArrowRight' || e.key === 'PageUp') { prevSlide(); if (isPlaying) scheduleNext(); }
+            if (e.key === 'Home') firstSlide();
+            if (e.key === 'End') lastSlide();
+            if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); togglePlay(); }
+            if (e.key === 'Escape') pause();
+        });
+
+        window.addEventListener('resize', updateScale);
+        window.addEventListener('orientationchange', function () { setTimeout(updateScale, 250); });
+
+        document.addEventListener('mousemove', function () {
+            document.body.classList.remove('hide-controls');
+            clearTimeout(controlsHideTimer);
+            controlsHideTimer = setTimeout(function () {
+                if (isPlaying) document.body.classList.add('hide-controls');
+            }, 2600);
+        });
+    }
+
+    function initSlider() {
+        collectSlides();
+        if (!slides.length) return;
+        document.body.classList.add('slider-mode');
+        bindControls();
+        showSlide(0);
+        setPlayButton();
+        var tip = qs('presentationStartTip');
+        if (tip) {
+            tip.style.display = 'flex';
+            setTimeout(function () { tip.style.display = ''; }, 4200);
+        }
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initSlider);
+    } else {
+        initSlider();
+    }
+})();
+</script>
+
+</body>
+</html>
