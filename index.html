@@ -2215,6 +2215,40 @@ body:not(.slider-mode) .page{
             transform-origin:center bottom !important;
         }
     }
+
+
+
+
+        .page,
+.cover-page-new {
+    width: 100% !important;
+    max-width: 100% !important;
+}
+
+/* عند تشغيل السلايدر */
+body.slider-mode .page,
+body.slider-mode .cover-page-new {
+    width: 100vw !important;
+    max-width: 100vw !important;
+}
+
+/* موبايل + تابلت + كمبيوتر */
+@media (max-width: 1200px),
+       (max-width: 1024px),
+       (max-width: 768px),
+       (max-width: 480px) {
+    .page,
+    .cover-page-new {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
+    body.slider-mode .page,
+    body.slider-mode .cover-page-new {
+        width: 100vw !important;
+        max-width: 100vw !important;
+    }
+}
 }
 
 </style>
