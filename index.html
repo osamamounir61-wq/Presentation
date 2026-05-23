@@ -3,7 +3,7 @@
 <html dir="rtl" lang="ar">
 <head>
 <meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
 <title>التقرير المالي الربعي المجمع - المقاولون العرب</title>
 <!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
@@ -1843,16 +1843,20 @@
         .presentation-stage {
             position: fixed;
             inset: 0;
-            width: 100vw;
-            height: 100vh;
+            top: var(--vv-top, 0px);
+            left: var(--vv-left, 0px);
+            width: var(--vvw, 100vw);
+            height: var(--vvh, 100dvh);
+            min-height: var(--vvh, 100dvh);
             overflow: hidden;
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 5;
+            z-index: 99990;
             pointer-events: none;
-            --safe-top: 12px;
-            --safe-bottom: 78px;
+            --safe-top: 4px;
+            --safe-bottom: 4px;
+            box-sizing: border-box;
         }
 
         .presentation-progress-wrap {
@@ -1987,8 +1991,9 @@
         body.slider-mode {
             padding: 0 !important;
             margin: 0 !important;
-            width: 100vw !important;
-            height: 100vh !important;
+            width: var(--vvw, 100vw) !important;
+            height: var(--vvh, 100dvh) !important;
+            min-height: var(--vvh, 100dvh) !important;
             overflow: hidden !important;
             background:
                 radial-gradient(circle at top left, rgba(52,232,158,.18), transparent 32%),
@@ -2141,6 +2146,81 @@
             }
         }
 
+
+
+        /* ===== حل نهائي لمشكلة شريط URL في الموبايل =====
+           استخدام ارتفاع الشاشة المرئي الحقيقي بدل 100vh حتى لا يختفي أسفل النموذج. */
+        html, body.slider-mode {
+            overscroll-behavior: none;
+            touch-action: manipulation;
+        }
+        body.slider-mode .presentation-stage {
+            padding-top: max(var(--safe-top, 6px), env(safe-area-inset-top));
+            padding-bottom: max(var(--safe-bottom, 72px), env(safe-area-inset-bottom));
+        }
+        body.slider-mode.hide-controls .presentation-stage {
+            --safe-top: 3px;
+            --safe-bottom: 3px;
+        }
+        body.slider-mode .presentation-toolbar {
+            bottom: max(6px, env(safe-area-inset-bottom)) !important;
+        }
+        body.slider-mode .page,
+        body.slider-mode .cover-page-new {
+            will-change: transform;
+            max-width: none !important;
+            max-height: none !important;
+        }
+        @supports (height: 100dvh) {
+            .presentation-stage { height: var(--vvh, 100dvh); }
+            body.slider-mode { height: var(--vvh, 100dvh) !important; }
+        }
+
+
+
+        /* ===== النسخة النهائية: نافذة منبثقة تغطي الشاشة بدون زر تكبير/تصغير ===== */
+        body.slider-mode {
+            position: fixed !important;
+            inset: 0 !important;
+        }
+        body.slider-mode .presentation-stage {
+            inset: 0 !important;
+            top: var(--vv-top, 0px) !important;
+            left: var(--vv-left, 0px) !important;
+            width: var(--vvw, 100vw) !important;
+            height: var(--vvh, 100dvh) !important;
+            padding: max(4px, env(safe-area-inset-top)) max(4px, env(safe-area-inset-right)) max(4px, env(safe-area-inset-bottom)) max(4px, env(safe-area-inset-left)) !important;
+            background: radial-gradient(circle at top left, rgba(52,232,158,.18), transparent 32%), linear-gradient(135deg, #08111f, #111827 55%, #0f3443) !important;
+        }
+        body.slider-mode .page,
+        body.slider-mode .cover-page-new {
+            width: 297mm !important;
+            height: 210mm !important;
+            transform: translate(-50%, -50%) scale(var(--slide-scale, 1)) !important;
+        }
+        body.slider-mode .presentation-toolbar {
+            bottom: max(8px, env(safe-area-inset-bottom)) !important;
+            opacity: .96;
+        }
+        body.slider-mode.hide-controls .presentation-toolbar,
+        body.slider-mode.hide-controls .presentation-progress-wrap,
+        body.slider-mode.hide-controls .presentation-start-tip {
+            opacity: 0 !important;
+            pointer-events: none !important;
+        }
+        @media (max-width: 950px) and (orientation: landscape) {
+            body.slider-mode .presentation-stage {
+                padding: 2px !important;
+            }
+            body.slider-mode .presentation-toolbar {
+                transform: translateX(-50%) scale(.82) !important;
+                bottom: 2px !important;
+            }
+            body.slider-mode.hide-controls .presentation-toolbar {
+                transform: translateX(-50%) scale(.82) translateY(18px) !important;
+            }
+        }
+
         @media print {
             .presentation-stage,
             .presentation-progress-wrap,
@@ -2172,6 +2252,7 @@
 <body>
 
 <div class="presentation-progress-wrap" aria-hidden="true"><div class="presentation-progress-bar" id="presentationProgressBar"></div></div>
+<div class="presentation-start-tip" id="presentationStartTip">اضغط تشغيل للعرض بملء الشاشة أو اضغط على الشاشة لإخفاء/إظهار الأزرار</div>
 <div class="presentation-toolbar" id="presentationToolbar" role="toolbar" aria-label="أدوات التحكم في العرض">
     <button type="button" id="firstSlideBtn" title="أول شريحة"><i class="fas fa-angles-right"></i></button>
     <button type="button" id="prevSlideBtn" title="الشريحة السابقة"><i class="fas fa-chevron-right"></i><span class="btn-text">السابق</span></button>
@@ -2186,7 +2267,6 @@
         <option value="15000">15 ثانية</option>
         <option value="20000">20 ثانية</option>
     </select>
-    <button type="button" id="fullscreenBtn" title="ملء الشاشة"><i class="fas fa-expand"></i></button>
 </div>
 
 <!-- ==================== الصفحة 1: Cover Image ==================== -->
@@ -3721,51 +3801,56 @@
         });
     }
 
+    function setViewportVars() {
+        /* visualViewport يحل مشكلة شريط URL في الموبايل */
+        var vv = window.visualViewport;
+        var w = vv ? vv.width : window.innerWidth;
+        var h = vv ? vv.height : window.innerHeight;
+        var top = vv ? vv.offsetTop : 0;
+        var left = vv ? vv.offsetLeft : 0;
+        document.documentElement.style.setProperty('--vvw', Math.round(w) + 'px');
+        document.documentElement.style.setProperty('--vvh', Math.round(h) + 'px');
+        document.documentElement.style.setProperty('--vv-top', Math.round(top) + 'px');
+        document.documentElement.style.setProperty('--vv-left', Math.round(left) + 'px');
+    }
+
     function updateScale() {
         if (!slides.length) return;
+        setViewportVars();
 
         var active = slides[currentIndex] || slides[0];
         var oldDisplay = active.style.display;
         var wasActive = active.classList.contains('active-slide');
         if (!wasActive) active.style.display = 'flex';
 
-        /* مقاس السلايد الأصلي A4 Landscape داخل الملف */
         var slideW = active.offsetWidth || 1123;
         var slideH = active.offsetHeight || 794;
         active.style.display = oldDisplay;
 
+        var vv = window.visualViewport;
+        var viewportW = vv ? vv.width : window.innerWidth;
+        var viewportH = vv ? vv.height : window.innerHeight;
+
         var isMobileLandscape = window.matchMedia('(max-width: 950px) and (orientation: landscape)').matches;
+        var isMobilePortrait = window.matchMedia('(max-width: 768px) and (orientation: portrait)').matches;
         var controlsHidden = document.body.classList.contains('hide-controls');
 
-        /*
-           الحل النهائي لمشكلة اختفاء جزء من الارتفاع:
-           لا يتم الاعتماد على العرض فقط، بل يتم حساب العرض والارتفاع معاً
-           ثم اختيار القيمة الأصغر، لذلك لا يخرج أي جزء من السلايد خارج الشاشة.
-        */
-        var safeTop = isMobileLandscape ? 4 : 10;
-        var safeBottom;
+        /* لا نحجز مساحة للأزرار لأنها خارج الصفحة وفوق الخلفية فقط.
+           السلايد نفسه يظهر كاملًا داخل الارتفاع الحقيقي للمتصفح. */
+        var safeTop = isMobileLandscape ? 2 : 4;
+        var safeBottom = isMobileLandscape ? 2 : 4;
 
-        if (controlsHidden) {
-            safeBottom = isMobileLandscape ? 4 : 10;
-        } else {
-            /* نترك مساحة للأزرار لأنها خارج الصفحة لكنها ظاهرة أسفل الشاشة */
-            safeBottom = isMobileLandscape ? 62 : 92;
-        }
+        document.documentElement.style.setProperty('--safe-top-js', safeTop + 'px');
+        document.documentElement.style.setProperty('--safe-bottom-js', safeBottom + 'px');
 
-        var availableW = Math.max(300, window.innerWidth * 0.95);
-        var availableH = Math.max(220, window.innerHeight - safeTop - safeBottom);
+        var availableW = Math.max(260, viewportW * 0.95);
+        var availableH = Math.max(180, viewportH - safeTop - safeBottom);
 
-        /* في الموبايل العرضي عند إخفاء الأزرار يتم استغلال الشاشة بالكامل تقريباً */
-        if (isMobileLandscape && controlsHidden) {
-            availableW = window.innerWidth * 0.95;
-            availableH = window.innerHeight * 0.98;
-        }
-
+        /* العرض المطلوب 95%، ومعه حماية نهائية تمنع اختفاء الارتفاع. */
         var scaleByWidth = availableW / slideW;
         var scaleByHeight = availableH / slideH;
         var scale = Math.min(scaleByWidth, scaleByHeight);
-
-        document.documentElement.style.setProperty('--slide-scale', String(Math.max(scale, 0.18)));
+        document.documentElement.style.setProperty('--slide-scale', String(Math.max(scale, 0.16)));
     }
 
     function resizeCharts() {
@@ -3870,16 +3955,12 @@
     function togglePlay() { isPlaying ? pause() : play(); }
 
     function bindControls() {
-        qs('playPauseBtn').addEventListener('click', togglePlay);
-        qs('nextSlideBtn').addEventListener('click', function () { nextSlide(); if (isPlaying) scheduleNext(); });
-        qs('prevSlideBtn').addEventListener('click', function () { prevSlide(); if (isPlaying) scheduleNext(); });
-        qs('firstSlideBtn').addEventListener('click', function () { firstSlide(); if (isPlaying) scheduleNext(); });
-        qs('lastSlideBtn').addEventListener('click', function () { lastSlide(); if (isPlaying) scheduleNext(); });
-        qs('fullscreenBtn').addEventListener('click', function () {
-            if (document.fullscreenElement && document.exitFullscreen) document.exitFullscreen();
-            else requestFullScreen();
-        });
-        qs('slideDuration').addEventListener('change', function (e) {
+        if (qs('playPauseBtn')) qs('playPauseBtn').addEventListener('click', togglePlay);
+        if (qs('nextSlideBtn')) qs('nextSlideBtn').addEventListener('click', function () { nextSlide(); if (isPlaying) scheduleNext(); });
+        if (qs('prevSlideBtn')) qs('prevSlideBtn').addEventListener('click', function () { prevSlide(); if (isPlaying) scheduleNext(); });
+        if (qs('firstSlideBtn')) qs('firstSlideBtn').addEventListener('click', function () { firstSlide(); if (isPlaying) scheduleNext(); });
+        if (qs('lastSlideBtn')) qs('lastSlideBtn').addEventListener('click', function () { lastSlide(); if (isPlaying) scheduleNext(); });
+        if (qs('slideDuration')) qs('slideDuration').addEventListener('change', function (e) {
             duration = parseInt(e.target.value, 10) || 10000;
             if (isPlaying) scheduleNext();
         });
@@ -3911,7 +3992,11 @@
         });
 
         window.addEventListener('resize', updateScale);
-        window.addEventListener('orientationchange', function () { setTimeout(updateScale, 250); });
+        window.addEventListener('orientationchange', function () { setTimeout(updateScale, 250); setTimeout(updateScale, 700); });
+        if (window.visualViewport) {
+            window.visualViewport.addEventListener('resize', updateScale);
+            window.visualViewport.addEventListener('scroll', updateScale);
+        }
 
         document.addEventListener('mousemove', function () {
             if (!window.matchMedia('(pointer: fine)').matches) return;
@@ -3927,6 +4012,7 @@
         collectSlides();
         if (!slides.length) return;
         document.body.classList.add('slider-mode');
+        setViewportVars();
         bindControls();
         showSlide(0);
         setPlayButton();
