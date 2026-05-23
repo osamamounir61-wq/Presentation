@@ -71,7 +71,7 @@
         }
 
 
-        /* موبايل بالوضع العرضي: تكبير عرض النموذج إلى 95% من عرض الشاشة */
+        /* موبايل بالوضع العرضي: تكبير عرض النموذج إلى 98% من عرض الشاشة */
         @media (max-width: 950px) and (orientation: landscape) {
             body.slider-mode .page,
             body.slider-mode .cover-page-new {
@@ -2117,7 +2117,7 @@
 
         /* ===== حل اختفاء جزء من ارتفاع السلايد =====
            القاعدة: لا نسمح للسلايد أن يكبر أكبر من ارتفاع الشاشة المتاح.
-           عند إخفاء الأزرار على الموبايل العرضي نعطي السلايد مساحة أكبر حتى يقترب من 95%. */
+           عند إخفاء الأزرار على الموبايل العرضي نعطي السلايد مساحة أكبر حتى يقترب من 98%. */
         body.slider-mode.hide-controls .presentation-start-tip { display: none !important; }
 
         @media (orientation: landscape) and (max-width: 950px) {
@@ -2252,6 +2252,7 @@
 <body>
 
 <div class="presentation-progress-wrap" aria-hidden="true"><div class="presentation-progress-bar" id="presentationProgressBar"></div></div>
+
 <div class="presentation-toolbar" id="presentationToolbar" role="toolbar" aria-label="أدوات التحكم في العرض">
     <button type="button" id="firstSlideBtn" title="أول شريحة"><i class="fas fa-angles-right"></i></button>
     <button type="button" id="prevSlideBtn" title="الشريحة السابقة"><i class="fas fa-chevron-right"></i><span class="btn-text">السابق</span></button>
@@ -3842,10 +3843,10 @@
         document.documentElement.style.setProperty('--safe-top-js', safeTop + 'px');
         document.documentElement.style.setProperty('--safe-bottom-js', safeBottom + 'px');
 
-        var availableW = Math.max(260, viewportW * 0.95);
+        var availableW = Math.max(260, viewportW * 0.98);
         var availableH = Math.max(180, viewportH - safeTop - safeBottom);
 
-        /* العرض المطلوب 95%، ومعه حماية نهائية تمنع اختفاء الارتفاع. */
+        /* العرض المطلوب 98%، ومعه حماية نهائية تمنع اختفاء الارتفاع. */
         var scaleByWidth = availableW / slideW;
         var scaleByHeight = availableH / slideH;
         var scale = Math.min(scaleByWidth, scaleByHeight);
