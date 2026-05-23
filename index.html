@@ -2119,6 +2119,21 @@
     }
 }
 
+
+        @media (max-height: 600px) and (orientation: landscape) {
+    .page {
+        width: 95% !important; /* ملء معظم عرض الشاشة عند الدوران */
+        max-width: 800px; /* منع التمدد الزائد الذي يشوه المظهر */
+        height: auto !important; /* إلغاء أي ارتفاع ثابت بالمليمتر فوراً */
+        min-height: auto !important; /* ترك الارتفاع حر تماماً يتحدد حسب المحتوى */
+        margin: 10px auto !important;
+        padding: 20px !important;
+        border-radius: 8px !important; /* إعادة الحواف الدائرية لأنها تبدو أفضل في هذا الوضع */
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2) !important;
+        overflow-y: visible !important; /* السماح للمستخدم بالتمرير لأسفل لرؤية باقي النموذج */
+    }
+}
+
     </style>
 </head>
 <body>
