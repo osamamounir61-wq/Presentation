@@ -1851,6 +1851,8 @@
             justify-content: center;
             z-index: 5;
             pointer-events: none;
+            --safe-top: 12px;
+            --safe-bottom: 78px;
         }
 
         .presentation-progress-wrap {
@@ -2107,6 +2109,38 @@
                 transform: translateX(-50%) scale(.92) translateY(16px);
             }
         }
+
+        /* ===== حل اختفاء جزء من ارتفاع السلايد =====
+           القاعدة: لا نسمح للسلايد أن يكبر أكبر من ارتفاع الشاشة المتاح.
+           عند إخفاء الأزرار على الموبايل العرضي نعطي السلايد مساحة أكبر حتى يقترب من 95%. */
+        body.slider-mode.hide-controls .presentation-start-tip { display: none !important; }
+
+        @media (orientation: landscape) and (max-width: 950px) {
+            body.slider-mode .presentation-stage {
+                --safe-top: 4px;
+                --safe-bottom: 58px;
+            }
+            body.slider-mode.hide-controls .presentation-stage {
+                --safe-top: 3px;
+                --safe-bottom: 3px;
+            }
+            body.slider-mode .page,
+            body.slider-mode .cover-page-new {
+                border-radius: 7px !important;
+            }
+        }
+
+        @media (orientation: portrait) and (max-width: 768px) {
+            body.slider-mode .presentation-stage {
+                --safe-top: 8px;
+                --safe-bottom: 92px;
+            }
+            body.slider-mode.hide-controls .presentation-stage {
+                --safe-top: 8px;
+                --safe-bottom: 8px;
+            }
+        }
+
         @media print {
             .presentation-stage,
             .presentation-progress-wrap,
@@ -3689,27 +3723,49 @@
 
     function updateScale() {
         if (!slides.length) return;
+
         var active = slides[currentIndex] || slides[0];
         var oldDisplay = active.style.display;
         var wasActive = active.classList.contains('active-slide');
-        if (!wasActive) {
-            active.style.display = 'flex';
-        }
+        if (!wasActive) active.style.display = 'flex';
+
+        /* مقاس السلايد الأصلي A4 Landscape داخل الملف */
         var slideW = active.offsetWidth || 1123;
         var slideH = active.offsetHeight || 794;
         active.style.display = oldDisplay;
 
-        /* الصفحة تأخذ 95% من مساحة body، والـ toolbar خارج حساب الصفحة تماماً */
         var isMobileLandscape = window.matchMedia('(max-width: 950px) and (orientation: landscape)').matches;
-        var maxW = Math.max(320, window.innerWidth * 0.95);
-        var maxH = Math.max(240, window.innerHeight * (isMobileLandscape ? 0.98 : 0.95));
+        var controlsHidden = document.body.classList.contains('hide-controls');
 
-        /* نحافظ على النسبة الأصلية بدون مط أو تشويه.
-           في الموبايل العرضي نعطي أولوية أكبر للعرض، مع بقاء الصورة كاملة داخل السلايد. */
-        var scaleByWidth = maxW / slideW;
-        var scaleByHeight = maxH / slideH;
-        var scale = isMobileLandscape ? Math.min(scaleByWidth, Math.max(scaleByHeight, scaleByWidth * 0.88)) : Math.min(scaleByWidth, scaleByHeight);
-        document.documentElement.style.setProperty('--slide-scale', String(Math.max(scale, 0.20)));
+        /*
+           الحل النهائي لمشكلة اختفاء جزء من الارتفاع:
+           لا يتم الاعتماد على العرض فقط، بل يتم حساب العرض والارتفاع معاً
+           ثم اختيار القيمة الأصغر، لذلك لا يخرج أي جزء من السلايد خارج الشاشة.
+        */
+        var safeTop = isMobileLandscape ? 4 : 10;
+        var safeBottom;
+
+        if (controlsHidden) {
+            safeBottom = isMobileLandscape ? 4 : 10;
+        } else {
+            /* نترك مساحة للأزرار لأنها خارج الصفحة لكنها ظاهرة أسفل الشاشة */
+            safeBottom = isMobileLandscape ? 62 : 92;
+        }
+
+        var availableW = Math.max(300, window.innerWidth * 0.95);
+        var availableH = Math.max(220, window.innerHeight - safeTop - safeBottom);
+
+        /* في الموبايل العرضي عند إخفاء الأزرار يتم استغلال الشاشة بالكامل تقريباً */
+        if (isMobileLandscape && controlsHidden) {
+            availableW = window.innerWidth * 0.95;
+            availableH = window.innerHeight * 0.98;
+        }
+
+        var scaleByWidth = availableW / slideW;
+        var scaleByHeight = availableH / slideH;
+        var scale = Math.min(scaleByWidth, scaleByHeight);
+
+        document.documentElement.style.setProperty('--slide-scale', String(Math.max(scale, 0.18)));
     }
 
     function resizeCharts() {
@@ -3837,10 +3893,12 @@
         document.addEventListener('click', function (e) {
             if (toolbar && toolbar.contains(e.target)) return;
             document.body.classList.toggle('hide-controls');
+            updateScale();
         });
         document.addEventListener('touchend', function (e) {
             if (toolbar && toolbar.contains(e.target)) return;
             document.body.classList.toggle('hide-controls');
+            updateScale();
         }, { passive: true });
 
         document.addEventListener('keydown', function (e) {
