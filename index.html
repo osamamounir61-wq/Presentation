@@ -2088,18 +2088,30 @@
         /* 2. شاشات الكمبيوتر العادية واللاب توب (Desktops & Laptops) - أقل من 1200 بكسل */
 @media (max-width: 1200px) {
     .page {
-         width: 100%; /* استغلال الشاشة بالكامل دون أي هدر للمساحة */
-      
+        width: 95% !important; /* ملء معظم عرض الشاشة عند الدوران */
+        max-width: 800px; /* منع التمدد الزائد الذي يشوه المظهر */
+        height: auto !important; /* إلغاء أي ارتفاع ثابت بالمليمتر فوراً */
+        min-height: auto !important; /* ترك الارتفاع حر تماماً يتحدد حسب المحتوى */
+        margin: 10px auto !important;
+        padding: 20px !important;
+        border-radius: 8px !important; /* إعادة الحواف الدائرية لأنها تبدو أفضل في هذا الوضع */
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2) !important;
+        overflow-y: visible !important; /* السماح للمستخدم بالتمرير لأسفل لرؤية باقي النموذج */
     }
 }
 
 /* 3. الشاشات المتوسطة والأجهزة اللوحية الكبيرة (Large Tablets / IPad Pro) - أقل من 992 بكسل */
 @media (max-width: 992px) {
     .page {
-         width: 100%; /* استغلال الشاشة بالكامل دون أي هدر للمساحة */
-       /* ملء كامل ارتفاع شاشة الموبايل كحد أدنى */
-     /* إلغاء الحواف الدائرية ليظهر كأنه تطبيق موبايل */
-    
+       width: 95% !important; /* ملء معظم عرض الشاشة عند الدوران */
+        max-width: 800px; /* منع التمدد الزائد الذي يشوه المظهر */
+        height: auto !important; /* إلغاء أي ارتفاع ثابت بالمليمتر فوراً */
+        min-height: auto !important; /* ترك الارتفاع حر تماماً يتحدد حسب المحتوى */
+        margin: 10px auto !important;
+        padding: 20px !important;
+        border-radius: 8px !important; /* إعادة الحواف الدائرية لأنها تبدو أفضل في هذا الوضع */
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2) !important;
+        overflow-y: visible !important; /* السماح للمستخدم بالتمرير لأسفل لرؤية باقي النموذج */
     }
 }
 
@@ -2114,8 +2126,15 @@
 /* 5. شاشات الموبايل بجميع أنواعها (Smartphones) - أقل من 480 بكسل */
 @media (max-width: 480px) {
     .page {
-        width: 100%; /* استغلال الشاشة بالكامل دون أي هدر للمساحة */
-        
+      width: 95% !important; /* ملء معظم عرض الشاشة عند الدوران */
+        max-width: 800px; /* منع التمدد الزائد الذي يشوه المظهر */
+        height: auto !important; /* إلغاء أي ارتفاع ثابت بالمليمتر فوراً */
+        min-height: auto !important; /* ترك الارتفاع حر تماماً يتحدد حسب المحتوى */
+        margin: 10px auto !important;
+        padding: 20px !important;
+        border-radius: 8px !important; /* إعادة الحواف الدائرية لأنها تبدو أفضل في هذا الوضع */
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2) !important;
+        overflow-y: visible !important; /* السماح للمستخدم بالتمرير لأسفل لرؤية باقي النموذج */
     }
 }
 
